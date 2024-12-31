@@ -10,11 +10,10 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
     public abstract class SingleSaveBase : MonoBehaviour, ISaveInterface<Data>
     {
         /// <summary>
-        /// データを呼び出すためのデリゲート
+        /// データを呼び出すためのデリゲート。
+        /// ここにSendメソッドを集めておけば楽に集められる
         /// </summary>
         public abstract Func<List<Data>> CalledData { get; set; }
-
-        Func<IHaveSaveData<Data>> CallDataFunc { get; set; }
 
         /// <summary>
         /// 実際に保存するデータを入れる。

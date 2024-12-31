@@ -50,7 +50,7 @@ namespace GamesKeystoneFramework.Core.Input
                         actionName.Add(new List<string>());
                         foreach (var action in map.actions)
                         {
-                            actionName[actionName.Count - 1].Add(action.name);
+                            actionName[^1].Add(action.name);
                         }
                     }
                     if (!useLegacy)
