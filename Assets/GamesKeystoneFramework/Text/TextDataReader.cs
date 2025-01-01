@@ -30,6 +30,7 @@ namespace GamesKeystoneFramework.TextSystem
         Text,
         Question,
         Selection,
+        SelectionEnd,
         Ghost,
     }
 

@@ -33,7 +33,6 @@ namespace GamesKeystoneFramework.TextSystem
         {
             if (textCoroutine == null)
             {
-                readPoint++;
                 if (textDataList.Count - 1 < readPoint)
                 {
                     TextBoxHide();
@@ -63,6 +62,7 @@ namespace GamesKeystoneFramework.TextSystem
                     tmp.text += s[i] + "\n";
                 }
                 tmp.text += textDataList[readPoint].text + "\n";
+                readPoint++;
             }
         }
 
@@ -82,7 +82,6 @@ namespace GamesKeystoneFramework.TextSystem
             var s = tmp.text.Split("\n");
             if (s.Length == line + 1)
             {
-                int n = 5;
                 tmp.text = s[1];
                 for (int i = 2; i < s.Length; i++)
                 {
@@ -96,6 +95,7 @@ namespace GamesKeystoneFramework.TextSystem
                 yield return new WaitForSeconds(typingSpeed);
             }
             tmp.text += "\n";
+            readPoint++;
             textCoroutine = null;
         }
 

@@ -8,7 +8,7 @@ namespace GamesKeystoneFramework.TextSystem
     {
         private List<TextData> textData = new();
         private string fileName;
-
+        private Vector2 scrollPosition = Vector2.zero;
         [MenuItem("Window/TextDataEditor")]
         public static void ShowWindow()
         {
@@ -35,7 +35,7 @@ namespace GamesKeystoneFramework.TextSystem
                     });
                 }
             }
-            GUILayout.EndHorizontal();
+            GUILayout.FlexibleSpace();
             if (GUILayout.Button("Complete", GUILayout.Width(80), GUILayout.Height(20)))
             {
                 TextWrpper wrpper = new() { wrpperData = textData };
@@ -52,6 +52,8 @@ namespace GamesKeystoneFramework.TextSystem
                     Debug.Log(dataPath + "Ç…ÉtÉ@ÉCÉãÇçÏê¨ÇµÇ‹ÇµÇΩ");
                 }
             }
+            GUILayout.EndHorizontal();
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(position.height - 40));
             for (int i = 0; i < textData.Count; i++)
             {
                 GUILayout.BeginHorizontal();
@@ -67,6 +69,7 @@ namespace GamesKeystoneFramework.TextSystem
                 }
                 GUILayout.EndHorizontal();
             }
+            GUILayout.EndScrollView();
         }
     }
 }
