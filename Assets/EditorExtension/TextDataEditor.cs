@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 namespace GamesKeystoneFramework.TextSystem
@@ -53,12 +54,30 @@ namespace GamesKeystoneFramework.TextSystem
                 }
             }
             GUILayout.EndHorizontal();
+            GUILayout.Label("*00のように入力すると色を変えられます。終わるときは*のみ入力");
+            GUILayout.Label("/024のように入力すると文字サイズを変えられます。終わるときは/のみ入力");
+
+            if (textData.Count(x => x.dataType == TextDataType.Question) != textData.Count(x => x.dataType == TextDataType.QEnd))
+            {
+                GUILayout.Label("会話分岐の始点もしくは終点が足りません");
+            }
+            else
+            {
+                GUILayout.Label(" ");
+            }
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(position.height - 40));
             for (int i = 0; i < textData.Count; i++)
             {
                 GUILayout.BeginHorizontal();
                 textData[i].dataType = (TextDataType)EditorGUILayout.EnumPopup(textData[i].dataType, GUILayout.Width(80));
-                textData[i].text = EditorGUILayout.TextField(textData[i].text, GUILayout.ExpandWidth(true));
+                if (textData[i].dataType != TextDataType.QEnd)
+                    textData[i].text = EditorGUILayout.TextField(textData[i].text, GUILayout.ExpandWidth(true));
+                else
+                {
+                    GUI.enabled = false;
+                    textData[i].text = EditorGUILayout.TextField("QEndには入力できません", GUILayout.ExpandWidth(true));
+                    GUI.enabled = true;
+                }
                 if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(20)))
                 {
                     textData.RemoveAt(i);
