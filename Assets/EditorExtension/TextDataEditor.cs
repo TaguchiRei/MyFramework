@@ -36,6 +36,45 @@ namespace GamesKeystoneFramework.TextSystem
                     });
                 }
             }
+            GUILayout.EndHorizontal();
+            GUILayout.Label("*00のように入力すると色を変えられます。終わるときは*のみ入力");
+            GUILayout.Label("/024のように入力すると文字サイズを変えられます。終わるときは/のみ入力");
+
+            if (textData.Count(x => x.dataType == TextDataType.Question) != textData.Count(x => x.dataType == TextDataType.QEnd))
+            {
+                var style = new GUIStyle(EditorStyles.label);
+                style.richText = true;
+                GUILayout.Label("<color=red><b>会話分岐の始点もしくは終点が足りません</b></color>", style);
+            }
+            else
+            {
+                GUILayout.Label(" ");
+            }
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(position.height - 150));
+            for (int i = 0; i < textData.Count; i++)
+            {
+                GUILayout.BeginHorizontal();
+                textData[i].dataType = (TextDataType)EditorGUILayout.EnumPopup(textData[i].dataType, GUILayout.Width(80));
+                if (textData[i].dataType == TextDataType.QEnd || textData[i].dataType == TextDataType.TextEnd)
+                {
+                    GUI.enabled = false;
+                    textData[i].text = EditorGUILayout.TextField($"{textData[i].dataType}には入力できません", GUILayout.ExpandWidth(true));
+                    GUI.enabled = true;
+                }
+                else
+                    textData[i].text = EditorGUILayout.TextField(textData[i].text, GUILayout.ExpandWidth(true));
+                if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(20)))
+                {
+                    textData.RemoveAt(i);
+                }
+                if (GUILayout.Button("↓", GUILayout.Width(20), GUILayout.Height(20)))
+                {
+                    textData.Insert(i + 1, new TextData { dataType = TextDataType.Text, text = "" });
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndScrollView();
+            GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Complete", GUILayout.Width(80), GUILayout.Height(20)))
             {
@@ -54,41 +93,6 @@ namespace GamesKeystoneFramework.TextSystem
                 }
             }
             GUILayout.EndHorizontal();
-            GUILayout.Label("*00のように入力すると色を変えられます。終わるときは*のみ入力");
-            GUILayout.Label("/024のように入力すると文字サイズを変えられます。終わるときは/のみ入力");
-
-            if (textData.Count(x => x.dataType == TextDataType.Question) != textData.Count(x => x.dataType == TextDataType.QEnd))
-            {
-                GUILayout.Label("会話分岐の始点もしくは終点が足りません");
-            }
-            else
-            {
-                GUILayout.Label(" ");
-            }
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(position.height - 40));
-            for (int i = 0; i < textData.Count; i++)
-            {
-                GUILayout.BeginHorizontal();
-                textData[i].dataType = (TextDataType)EditorGUILayout.EnumPopup(textData[i].dataType, GUILayout.Width(80));
-                if (textData[i].dataType != TextDataType.QEnd)
-                    textData[i].text = EditorGUILayout.TextField(textData[i].text, GUILayout.ExpandWidth(true));
-                else
-                {
-                    GUI.enabled = false;
-                    textData[i].text = EditorGUILayout.TextField("QEndには入力できません", GUILayout.ExpandWidth(true));
-                    GUI.enabled = true;
-                }
-                if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(20)))
-                {
-                    textData.RemoveAt(i);
-                }
-                if (GUILayout.Button("↓", GUILayout.Width(20), GUILayout.Height(20)))
-                {
-                    textData.Insert(i + 1, new TextData { dataType = TextDataType.Text, text = "" });
-                }
-                GUILayout.EndHorizontal();
-            }
-            GUILayout.EndScrollView();
         }
     }
 }

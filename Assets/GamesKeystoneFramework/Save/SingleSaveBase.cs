@@ -13,7 +13,7 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
         /// データを呼び出すためのデリゲート。
         /// ここにSendメソッドを集めておけば楽に集められる
         /// </summary>
-        public abstract Func<List<Data>> CalledData { get; set; }
+        public abstract List<Func<List<Data>>> CalledData { get; set; }
 
         /// <summary>
         /// 実際に保存するデータを入れる。

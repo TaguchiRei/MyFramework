@@ -39,7 +39,7 @@ namespace GamesKeystoneFramework.Core
     interface ISaveInterface <T>
     {
 
-        public Func<List<T>> CalledData { get; set; }
+        public List<Func<List<T>>> CalledData { get; set; }
         List<T> DataContents { get; set; }
     }
 

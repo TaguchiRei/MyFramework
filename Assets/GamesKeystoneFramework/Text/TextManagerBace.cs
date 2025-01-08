@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -66,7 +67,6 @@ namespace GamesKeystoneFramework.TextSystem
                         case TextDataType.Question:
                             questionMode = true;
                             canSelect = false;
-                            SelectBoxShow();
                             Question(readPoint, text);
                             break;
                         case TextDataType.Branch:
@@ -83,6 +83,10 @@ namespace GamesKeystoneFramework.TextSystem
                                 }
                             }
                             break;
+                        case TextDataType.QEnd:
+                            readPoint++;
+                            Next();
+                            break;
                         case TextDataType.TextEnd:
                             SelectBoxHide();
                             TextBoxHide();
@@ -93,61 +97,41 @@ namespace GamesKeystoneFramework.TextSystem
                 {
                     StopCoroutine(textCoroutine);
                     textCoroutine = null;
-                    var s = textBoxTMP.text.Split("\n");
-                    textBoxTMP.text = "";
-                    for (int i = 0; i < s.Length - 1; i++)
-                    {
-                        textBoxTMP.text += s[i] + "\n";
-                    }
-                    bool colorMode = false;
-                    bool sizeMode = false;
-                    for (int i = 0; i < text.Length; i++)
-                    {
-                        var textUpdate = TextUpdate(i, text, colorMode, sizeMode);
-                        i += textUpdate.Item1;
-                        colorMode = textUpdate.Item2;
-                        sizeMode = textUpdate.Item3;
-                    }
+                    textBoxTMP.maxVisibleCharacters = textBoxTMP.GetParsedText().Length;
                     textBoxTMP.text += "\n";
                     readPoint++;
                 }
             }
             else if (canSelect == true)
             {
-                if (textCoroutine == null)
-                {
-                    Debug.Log("決定が押されました。");
-                    SelectBoxHide();
-                    readPoint = selectLine[selectNumber];
-                    selectLine.Clear();
-                    questionMode = false;
-                    ansMode = true;
-                    Next();
-                }
+                SelectBoxHide();
+                readPoint = selectLine[selectNumber];
+                selectLine.Clear();
+                questionMode = false;
+                ansMode = true;
+                Next();
+            }
+            else
+            {
+                StopCoroutine(textCoroutine);
+                SelectorShow(readPoint);
+                textCoroutine = null;
+                textBoxTMP.maxVisibleCharacters = textBoxTMP.GetParsedText().Length;
+                textBoxTMP.text += "\n";
             }
         }
 
         /// <summary>
         /// 会話分岐を制作するときに使います
         /// </summary>
-        /// <param name="i"></param>
-        public void Question(int i, string question)
+        /// <param name="readPoint"></param>
+        public void Question(int readPoint, string question)
         {
             selectTMP.text = "";
             textBoxTMP.text = "";
-            textCoroutine = StartCoroutine(TypeText(question, (() => canSelect = true)));
-            for (; i < textDataList.Count; i++)
-            {
-                if (textDataList[i].dataType == TextDataType.Branch)
-                {
-                    selectLine.Add(i + 1);
-                    selectTMP.text += textDataList[i].text + "\n";
-                }
-                else if (textDataList[i].dataType == TextDataType.QEnd)
-                {
-                    break;
-                }
-            }
+            selectNumber = 0;
+            Debug.Log(textBoxTMP.text.Length);
+            textCoroutine = StartCoroutine(TypeText(question, (() => SelectorShow(readPoint))));
         }
 
         /// <summary>
@@ -164,12 +148,12 @@ namespace GamesKeystoneFramework.TextSystem
             if (up)
             {
                 if (selectNumber != 0)
-                    selectNumber++;
+                    selectNumber--;
             }
             else
             {
                 if (selectNumber != selectLine.Count - 1)
-                    selectNumber--;
+                    selectNumber++;
             }
         }
         public virtual void SelectBoxShow()
@@ -192,7 +176,27 @@ namespace GamesKeystoneFramework.TextSystem
             textBox.gameObject.SetActive(false);
             textBoxTMP.gameObject.SetActive(false);
         }
-
+        /// <summary>
+        /// 選択肢を表示するためのメソッド
+        /// </summary>
+        /// <param name="i"></param>
+        void SelectorShow(int i)
+        {
+            SelectBoxShow();
+            for (; i < textDataList.Count; i++)
+            {
+                if (textDataList[i].dataType == TextDataType.Branch)
+                {
+                    selectLine.Add(i + 1);
+                    selectTMP.text += textDataList[i].text + "\n";
+                }
+                else if (textDataList[i].dataType == TextDataType.QEnd)
+                {
+                    break;
+                }
+            }
+            canSelect = true;
+        }
         /// <summary>
         /// テキストを1文字ずつ表示するコルーチン
         /// </summary>
@@ -201,78 +205,77 @@ namespace GamesKeystoneFramework.TextSystem
         /// <returns></returns>
         IEnumerator TypeText(string text, Action action = null)
         {
-            var s = textBoxTMP.text.Split("\n");
-            if (s.Length == line + 1)
+            var s = textBoxTMP.text.Split('\n').ToList();
+            if (s.Count > line)
             {
-                textBoxTMP.text = s[1];
-                for (int i = 2; i < s.Length; i++)
-                {
-                    textBoxTMP.text += "\n" + s[i];
-                }
+                s.RemoveAt(0);
+                textBoxTMP.text = string.Join("\n", s);
             }
-            //テキストを処理しつつ表示させる
-            bool colorMode = false;
-            bool sizeMode = false;
+            textBoxTMP.ForceMeshUpdate();
+            textBoxTMP.maxVisibleCharacters = textBoxTMP.GetParsedText().Length;
+            textBoxTMP.text += TextUpdate(text);
+            var wait = new WaitForSeconds(typingSpeed);
             for (int i = 0; i < text.Length; i++)
             {
-                var textUpdate = TextUpdate(i, text, colorMode, sizeMode);
-                i += textUpdate.Item1;
-                colorMode = textUpdate.Item2;
-                sizeMode = textUpdate.Item3;
-                if(colorMode || sizeMode)
-                    continue;
-                yield return new WaitForSeconds(typingSpeed);
+                textBoxTMP.maxVisibleCharacters++;
+                yield return wait;
             }
             textBoxTMP.text += "\n";
             readPoint++;
             action?.Invoke();
-            action = null;
             textCoroutine = null;
         }
-        (int, bool, bool) TextUpdate(int i, string text, bool colorMode, bool sizeMode)
+        string TextUpdate(string text)
         {
-            int returnNumber = 0;
-            switch (text[i])
+            bool colorMode = false;
+            bool sizeMode = false;
+            string returnText = "";
+            int returnInt = 0;
+            for (int i = 0; i < text.Length; i++)
             {
-                case '*':
-                    if (!colorMode)
-                    {
-                        colorMode = true;
-                        var colorNumber = int.Parse(text[i + 1].ToString() + text[i + 2]);
-                        if (colors.Length < colorNumber)
+                switch (text[i])
+                {
+                    case '*':
+                        if (!colorMode)
                         {
-                            Debug.LogError("そのインデックスに対応する色が設定されていません");
-                            StopCoroutine(textCoroutine);
-                            textCoroutine = null;
+                            colorMode = true;
+                            var colorNumber = int.Parse(text[i + 1].ToString() + text[i + 2]);
+                            if (colors.Length < colorNumber)
+                            {
+                                Debug.LogError("そのインデックスに対応する色が設定されていません");
+                                StopCoroutine(textCoroutine);
+                                textCoroutine = null;
+                            }
+                            returnText += $"<color=#{ColorUtility.ToHtmlStringRGB(colors[colorNumber])}>";
+                            i += 2;
                         }
-                        textBoxTMP.text += $"<color=#{ColorUtility.ToHtmlStringRGB(colors[colorNumber])}>";
-                        returnNumber = 2;
-                    }
-                    else
-                    {
-                        colorMode = false;
-                        textBoxTMP.text += "</color>";
-                    }
-                    break;
-                case '/':
-                    if (!sizeMode)
-                    {
-                        int size = int.Parse(text[i + 1].ToString() + text[i + 2] + text[i + 3]);
-                        textBoxTMP.text += $"<size={size}>";
-                        returnNumber = 3;
-                        sizeMode = true;
-                    }
-                    else
-                    {
-                        sizeMode = false;
-                        textBoxTMP.text += "</size>";
-                    }
-                    break;
-                default:
-                    textBoxTMP.text += text[i];
-                    break;
+                        else
+                        {
+                            colorMode = false;
+                            returnText += "</color>";
+                        }
+                        break;
+                    case '/':
+                        if (!sizeMode)
+                        {
+                            int size = int.Parse(text[i + 1].ToString() + text[i + 2] + text[i + 3]);
+                            returnText += $"<size={size}>";
+                            sizeMode = true;
+                            i += 3;
+                        }
+                        else
+                        {
+                            sizeMode = false;
+                            returnText += "</size>";
+                        }
+                        break;
+                    default:
+                        returnText += text[i];
+                        returnInt++;
+                        break;
+                }
             }
-            return (returnNumber, colorMode, sizeMode);
+            return returnText;
         }
     }
 }
