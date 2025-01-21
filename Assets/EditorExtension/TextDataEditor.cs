@@ -42,8 +42,7 @@ namespace GamesKeystoneFramework.TextSystem
 
             if (textData.Count(x => x.dataType == TextDataType.Question) != textData.Count(x => x.dataType == TextDataType.QEnd))
             {
-                var style = new GUIStyle(EditorStyles.label);
-                style.richText = true;
+                var style = new GUIStyle(EditorStyles.label) { richText = true };
                 GUILayout.Label("<color=red><b>会話分岐の始点もしくは終点が足りません</b></color>", style);
             }
             else
@@ -78,17 +77,17 @@ namespace GamesKeystoneFramework.TextSystem
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Complete", GUILayout.Width(80), GUILayout.Height(20)))
             {
-                TextWrpper wrpper = new() { wrpperData = textData };
+                TextWrpper wrapper = new() { wrpperData = textData };
                 string dataPath = Path.Combine(Application.dataPath, "TextData", fileName + ".json");
                 if (File.Exists(dataPath))
                 {
-                    File.WriteAllText(dataPath, JsonUtility.ToJson(wrpper));
+                    File.WriteAllText(dataPath, JsonUtility.ToJson(wrapper));
                     Debug.Log(dataPath + "に保存しました");
                 }
                 else
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(dataPath));
-                    File.WriteAllText(dataPath, JsonUtility.ToJson(wrpper));
+                    File.WriteAllText(dataPath, JsonUtility.ToJson(wrapper));
                     Debug.Log(dataPath + "にファイルを作成しました");
                 }
             }

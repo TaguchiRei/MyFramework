@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 namespace GamesKeystoneFramework.TextSystem
 {
-    public abstract class TextManagerBace : MonoBehaviour
+    public abstract class TextManagerBase : MonoBehaviour
     {
         [SerializeField] int line = 2;
         [SerializeField] Color[] colors;
