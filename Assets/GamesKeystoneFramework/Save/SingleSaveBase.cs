@@ -7,7 +7,7 @@ using GamesKeystoneFramework.Core;
 
 namespace GamesKeystoneFramework.SaveSystem.singleSave
 {
-    public abstract class SingleSaveBase : MonoBehaviour, ISaveInterface<Data>
+    public abstract class SingleSaveBase : MonoBehaviour
     {
         /// <summary>
         /// データを呼び出すためのデリゲート。

@@ -10,7 +10,6 @@ namespace GamesKeystoneFramework.PolarCoordinates
         public float radius;
         public float angle;
 
-
         //以下は近似値を保存してある
         private static readonly PolarCoordinates upCoordinates = new(1, 1.5707964f);
         private static readonly PolarCoordinates downCoordinates = new(1, -1.5707964f);
@@ -71,9 +70,10 @@ namespace GamesKeystoneFramework.PolarCoordinates
         /// </summary>
         /// <param name="polarCoordinates"></param>
         /// <returns></returns>
-        public Vector2 ToVector2(PolarCoordinates polarCoordinates)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Vector2 ToVector2()
         {
-            return new Vector2(polarCoordinates.radius * Mathf.Cos(angle), polarCoordinates.radius * Mathf.Sin(angle));
+            return new Vector2(radius * Mathf.Cos(angle), radius * Mathf.Sin(angle));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -100,6 +100,11 @@ namespace GamesKeystoneFramework.PolarCoordinates
         }
 
         //汎用メソッドなどを書く
+        /// <summary>
+        /// 0から2πの間にまとめる
+        /// </summary>
+        /// <param name="polarCoordinates"></param>
+        /// <returns></returns>
         public PolarCoordinates AngleNormalizeZeroBase(PolarCoordinates polarCoordinates)
         {
             angle = polarCoordinates.angle % (2 * Mathf.PI); // まずは0から2πに収める
@@ -110,12 +115,17 @@ namespace GamesKeystoneFramework.PolarCoordinates
             return new PolarCoordinates(polarCoordinates.radius, angle);
         }
 
+        /// <summary>
+        /// -πからπの間に丸める
+        /// </summary>
+        /// <param name="polarCoordinates"></param>
+        /// <returns></returns>
         public PolarCoordinates AngleNormalizePIMax(PolarCoordinates polarCoordinates)
         {
             angle = polarCoordinates.angle % (2 * Mathf.PI); // まずは0から2πに収める
             if (angle < 0)
                 angle += 2 * Mathf.PI; // 負の角度を2πを加えて正の範囲に
-            return new PolarCoordinates(polarCoordinates.radius,angle);
+            return new PolarCoordinates(polarCoordinates.radius, angle);
         }
 
 
@@ -124,6 +134,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj)
         {
             if (obj is Vector2 other2)
