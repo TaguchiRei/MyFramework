@@ -247,5 +247,25 @@ namespace GamesKeystoneFramework.PolarCoordinates
         {
             return new PolarCoordinates((float)Math.Sqrt(x * x + y * y), (float)Math.Atan(y / x));
         }
+        public PolarCoordinates ToPolarCoordinates(Vector2 vector2)
+        {
+            return new PolarCoordinates((float)Math.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y), (float)Math.Atan(vector2.y / vector2.x));
+        }
+        public float GetAngle(float x, float y)
+        {
+            return (float)Math.Sqrt(x * x + y * y);
+        }
+        public float GetAngle(Vector2 vector2)
+        {
+            return (float)Math.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+        }
+        public float GetRadius(float x, float y)
+        {
+            return (float)(Math.Atan(y / x));
+        }
+        public float GetRadius(Vector2 vector2)
+        {
+            return (float)(Math.Atan(vector2.y / vector2.x));
+        }
     }
 }
