@@ -9,6 +9,7 @@ namespace GamesKeystoneFramework.TextSystem
 {
     public abstract class TextManagerBase : MonoBehaviour
     {
+        [SerializeField] bool _useBranch = true;
         [SerializeField] int line = 2;
         [SerializeField] Color[] colors;
         [SerializeField] TextDataReader reader;
@@ -47,14 +48,16 @@ namespace GamesKeystoneFramework.TextSystem
             Next();
         }
 
-        public virtual void Next()
+        public virtual bool Next()
         {
             if (!questionMode)
             {
                 if (textDataList.Count - 1 < readPoint)
                 {
                     TextBoxHide();
-                    return;
+                    if (_useBranch)
+                        SelectBoxHide();
+                    return false;
                 }
                 string text = textDataList[readPoint].text;
                 if (textCoroutine == null)
@@ -119,6 +122,7 @@ namespace GamesKeystoneFramework.TextSystem
                 textBoxTMP.maxVisibleCharacters = textBoxTMP.GetParsedText().Length;
                 textBoxTMP.text += "\n";
             }
+            return true;
         }
 
         /// <summary>

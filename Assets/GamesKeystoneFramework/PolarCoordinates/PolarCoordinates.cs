@@ -7,8 +7,8 @@ namespace GamesKeystoneFramework.PolarCoordinates
 {
     public struct PolarCoordinates : IEquatable<PolarCoordinates>, IFormattable
     {
-        public float radius;
-        public float angle;
+        public float Radius;
+        public float Angle;
 
         //ˆÈ‰º‚Í‹ßŽ—’l‚ð•Û‘¶‚µ‚Ä‚ ‚é
         private static readonly PolarCoordinates upCoordinates = new(1, 1.5707964f);
@@ -23,8 +23,8 @@ namespace GamesKeystoneFramework.PolarCoordinates
         /// <param name="angle"></param>
         public PolarCoordinates(float radius, float angle)
         {
-            this.radius = radius;
-            this.angle = angle;
+            this.Radius = radius;
+            this.Angle = angle;
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace GamesKeystoneFramework.PolarCoordinates
             {
                 return index switch
                 {
-                    0 => radius,
-                    1 => angle,
+                    0 => Radius,
+                    1 => Angle,
                     _ => throw new IndexOutOfRangeException("Invalid PolarCoordinates index!"),
                 };
             }
@@ -51,10 +51,10 @@ namespace GamesKeystoneFramework.PolarCoordinates
                 switch (index)
                 {
                     case 0:
-                        radius = value;
+                        Radius = value;
                         break;
                     case 1:
-                        angle = value;
+                        Angle = value;
                         break;
                     default:
                         throw new IndexOutOfRangeException("Invalid PolarCoordinates index!");
@@ -73,13 +73,13 @@ namespace GamesKeystoneFramework.PolarCoordinates
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2 ToVector2()
         {
-            return new Vector2(radius * Mathf.Cos(angle), radius * Mathf.Sin(angle));
+            return new Vector2(Radius * Mathf.Cos(Angle), Radius * Mathf.Sin(Angle));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return radius.GetHashCode() ^ (angle.GetHashCode() << 2);
+            return Radius.GetHashCode() ^ (Angle.GetHashCode() << 2);
         }
 
         public static PolarCoordinates Up
@@ -107,12 +107,12 @@ namespace GamesKeystoneFramework.PolarCoordinates
         /// <returns></returns>
         public PolarCoordinates AngleNormalizeZeroBase(PolarCoordinates polarCoordinates)
         {
-            angle = polarCoordinates.angle % (2 * Mathf.PI); // ‚Ü‚¸‚Í0‚©‚ç2ƒÎ‚ÉŽû‚ß‚é
-            if (angle > Mathf.PI)
-                angle -= 2 * Mathf.PI; // 2ƒÎ‚ðˆø‚¢‚Ä-ƒÎ‚©‚çƒÎ‚ÉŽû‚ß‚é
-            else if (angle <= -Mathf.PI)
-                angle += 2 * Mathf.PI;
-            return new PolarCoordinates(polarCoordinates.radius, angle);
+            Angle = polarCoordinates.Angle % (2 * Mathf.PI); // ‚Ü‚¸‚Í0‚©‚ç2ƒÎ‚ÉŽû‚ß‚é
+            if (Angle > Mathf.PI)
+                Angle -= 2 * Mathf.PI; // 2ƒÎ‚ðˆø‚¢‚Ä-ƒÎ‚©‚çƒÎ‚ÉŽû‚ß‚é
+            else if (Angle <= -Mathf.PI)
+                Angle += 2 * Mathf.PI;
+            return new PolarCoordinates(polarCoordinates.Radius, Angle);
         }
 
         /// <summary>
@@ -122,10 +122,10 @@ namespace GamesKeystoneFramework.PolarCoordinates
         /// <returns></returns>
         public PolarCoordinates AngleNormalizePIMax(PolarCoordinates polarCoordinates)
         {
-            angle = polarCoordinates.angle % (2 * Mathf.PI); // ‚Ü‚¸‚Í0‚©‚ç2ƒÎ‚ÉŽû‚ß‚é
-            if (angle < 0)
-                angle += 2 * Mathf.PI; // •‰‚ÌŠp“x‚ð2ƒÎ‚ð‰Á‚¦‚Ä³‚Ì”ÍˆÍ‚É
-            return new PolarCoordinates(polarCoordinates.radius, angle);
+            Angle = polarCoordinates.Angle % (2 * Mathf.PI); // ‚Ü‚¸‚Í0‚©‚ç2ƒÎ‚ÉŽû‚ß‚é
+            if (Angle < 0)
+                Angle += 2 * Mathf.PI; // •‰‚ÌŠp“x‚ð2ƒÎ‚ð‰Á‚¦‚Ä³‚Ì”ÍˆÍ‚É
+            return new PolarCoordinates(polarCoordinates.Radius, Angle);
         }
 
 
@@ -150,7 +150,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(PolarCoordinates other)
         {
-            return radius == other.radius && angle == other.angle;
+            return Radius == other.Radius && Angle == other.Angle;
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
                 format = "F2";
             formatProvider ??= CultureInfo.InvariantCulture.NumberFormat;
 
-            return $"({radius.ToString(format, formatProvider)}, {angle.ToString(format, formatProvider)})";
+            return $"({Radius.ToString(format, formatProvider)}, {Angle.ToString(format, formatProvider)})";
         }
 
         //
@@ -186,62 +186,62 @@ namespace GamesKeystoneFramework.PolarCoordinates
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator +(PolarCoordinates a, PolarCoordinates b)
         {
-            return new PolarCoordinates(a.radius + b.radius, a.angle + b.angle);
+            return new PolarCoordinates(a.Radius + b.Radius, a.Angle + b.Angle);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator -(PolarCoordinates a, PolarCoordinates b)
         {
-            return new PolarCoordinates(a.radius - b.radius, a.angle - b.angle);
+            return new PolarCoordinates(a.Radius - b.Radius, a.Angle - b.Angle);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator *(PolarCoordinates a, PolarCoordinates b)
         {
-            return new PolarCoordinates(a.radius * b.radius, a.angle * b.angle);
+            return new PolarCoordinates(a.Radius * b.Radius, a.Angle * b.Angle);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator /(PolarCoordinates a, PolarCoordinates b)
         {
-            return new PolarCoordinates(a.radius / b.radius, a.angle / b.angle);
+            return new PolarCoordinates(a.Radius / b.Radius, a.Angle / b.Angle);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator -(PolarCoordinates a)
         {
-            return new PolarCoordinates(0f - a.radius, 0f - a.angle);
+            return new PolarCoordinates(0f - a.Radius, 0f - a.Angle);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator *(PolarCoordinates a, float b)
         {
-            return new PolarCoordinates(a.radius * b, a.angle * b);
+            return new PolarCoordinates(a.Radius * b, a.Angle * b);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator *(float a, PolarCoordinates b)
         {
-            return new PolarCoordinates(b.radius * a, b.angle * a);
+            return new PolarCoordinates(b.Radius * a, b.Angle * a);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator /(PolarCoordinates a, float b)
         {
-            return new PolarCoordinates(a.radius * b, a.angle / b);
+            return new PolarCoordinates(a.Radius * b, a.Angle / b);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator /(float a, PolarCoordinates b)
         {
-            return new PolarCoordinates(b.radius * a, b.angle * a);
+            return new PolarCoordinates(b.Radius * a, b.Angle * a);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(PolarCoordinates a, PolarCoordinates b)
         {
-            float num = a.radius - b.radius;
-            float num2 = a.angle - b.angle;
+            float num = a.Radius - b.Radius;
+            float num2 = a.Angle - b.Angle;
             return num * num + num2 * num2 < 9.99999944E-11f;
         }
 

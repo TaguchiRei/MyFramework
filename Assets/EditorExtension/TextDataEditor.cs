@@ -18,7 +18,7 @@ namespace GamesKeystoneFramework.TextSystem
         private void OnGUI()
         {
             fileName = EditorGUILayout.TextField("ƒtƒ@ƒCƒ‹–¼‚ð“ü—Í", fileName);
-            string path = Path.Combine(Application.dataPath, "TextData", fileName + ".json");
+            string path = Path.Combine(Application.streamingAssetsPath, "TextData", fileName + ".json");
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("FileRead", GUILayout.Width(80), GUILayout.Height(20)) && File.Exists(path))
             {
@@ -78,7 +78,7 @@ namespace GamesKeystoneFramework.TextSystem
             if (GUILayout.Button("Complete", GUILayout.Width(80), GUILayout.Height(20)))
             {
                 TextWrpper wrapper = new() { wrpperData = textData };
-                string dataPath = Path.Combine(Application.dataPath, "TextData", fileName + ".json");
+                string dataPath = Path.Combine(Application.streamingAssetsPath, "TextData", fileName + ".json");
                 if (File.Exists(dataPath))
                 {
                     File.WriteAllText(dataPath, JsonUtility.ToJson(wrapper));
