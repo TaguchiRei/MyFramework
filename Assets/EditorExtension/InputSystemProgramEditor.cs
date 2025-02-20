@@ -23,18 +23,18 @@ namespace GamesKeystoneFramework.Core.Input
         private void OnGUI()
         {
             asset = (InputActionAsset)EditorGUILayout.ObjectField("InputActionAsset", asset, typeof(InputActionAsset), true);
-            className = EditorGUILayout.TextField("ƒNƒ‰ƒX‚Ì–¼‘O‚ğŒˆ‚ß‚Ä‚­‚¾‚³‚¢",className);
+            className = EditorGUILayout.TextField("ã‚¯ãƒ©ã‚¹ã®åå‰ã‚’æ±ºã‚ã¦ãã ã•ã„",className);
             useLegacy = EditorGUILayout.Toggle("Use Legacy", useLegacy);
             if (asset != null)
             {
-                GUILayout.Label("ƒAƒ^ƒbƒ`Ï‚İ: " + asset.name);
+                GUILayout.Label("ã‚¢ã‚¿ãƒƒãƒæ¸ˆã¿: " + asset.name);
             }
             else
             {
-                GUILayout.Label("InputActionAsset‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚­‚¾‚³‚¢");
+                GUILayout.Label("InputActionAssetã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ãã ã•ã„");
             }
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(300)); // ƒXƒNƒ[ƒ‹ƒrƒ…[‚ÌŠJn
-            programText = EditorGUILayout.TextArea(programText, GUILayout.ExpandHeight(true)); // TextArea‚Ì‚‚³‚ğŠg’£
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.Height(300)); // ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒ“ãƒ¥ãƒ¼ã®é–‹å§‹
+            programText = EditorGUILayout.TextArea(programText, GUILayout.ExpandHeight(true)); // TextAreaã®é«˜ã•ã‚’æ‹¡å¼µ
             EditorGUILayout.EndScrollView();
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -66,7 +66,7 @@ namespace GamesKeystoneFramework.Core.Input
                 }
                 else
                 {
-                    Debug.LogWarning("InputActionAsset‚ªƒZƒbƒg‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+                    Debug.LogWarning("InputActionAssetãŒã‚»ãƒƒãƒˆã•ã‚Œã¦ã„ã¾ã›ã‚“");
                     programText = "";
                     EditorGUI.FocusTextInControl(null);
                     Repaint();
@@ -78,7 +78,7 @@ namespace GamesKeystoneFramework.Core.Input
         {
             string returnString =
                 "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\nusing UnityEngine.InputSystem\n\npublic class " 
-                + className + " : MonoBehaviour\n{\n    private PlayerInput _playerInput;\n    private Queue<Func<object>> inputQuere;\n    void Start()\n    {\n        _playerInput = new();\n        //ƒAƒNƒVƒ‡ƒ“ƒCƒxƒ“ƒg‚ğ“o˜^\n";
+                + className + " : MonoBehaviour\n{\n    private PlayerInput _playerInput;\n    private Queue<Func<object>> inputQuere;\n    void Start()\n    {\n        _playerInput = new();\n        //ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆã‚’ç™»éŒ²\n";
             for (int i = 0; i < mapName.Count; i++)
             {
                 for (int j = 0; j < actionName[i].Count; j++)
@@ -107,7 +107,7 @@ namespace GamesKeystoneFramework.Core.Input
         {
             string returnString =
                "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\nusing UnityEngine.InputSystem\n\npublic class "
-               + className + " : MonoBehaviour\n{\n    private PlayerInput _playerInput;\n    private Queue<Func<object>> inputQuere;\n    void Start()\n    {\n        _playerInput = new();\n        //ƒAƒNƒVƒ‡ƒ“ƒCƒxƒ“ƒg‚ğ“o˜^\n";
+               + className + " : MonoBehaviour\n{\n    private PlayerInput _playerInput;\n    private Queue<Func<object>> inputQuere;\n    void Start()\n    {\n        _playerInput = new();\n        //ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã‚¤ãƒ™ãƒ³ãƒˆã‚’ç™»éŒ²\n";
             for (int i = 0; i < mapName.Count; i++)
             {
                 for (int j = 0; j < actionName[i].Count; j++)

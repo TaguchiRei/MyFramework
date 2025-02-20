@@ -1,18 +1,17 @@
-using Cysharp.Threading.Tasks;
 using System;
 using System.IO;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.Core.Save
+namespace GamesKeystoneFramework.Save
 {
     /// <summary>
-    /// ƒZ[ƒuƒf[ƒ^‚Í‚±‚±‚ğŒp³‚µ‚½ƒNƒ‰ƒX‚É•Ï”‚ğì‚Á‚Ä•Û‘¶‚·‚é
+    /// ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã¯ã“ã“ã‚’ç¶™æ‰¿ã—ãŸã‚¯ãƒ©ã‚¹ã«å¤‰æ•°ã‚’ä½œã£ã¦ä¿å­˜ã™ã‚‹
     /// </summary>
     [Serializable]
     public abstract class SaveDataBase<T>
     {
         /// <summary>
-        /// ƒZ[ƒu‚·‚éÛ‚Í‚±‚ê‚ğŒÄ‚Ño‚·
+        /// ã‚»ãƒ¼ãƒ–ã™ã‚‹éš›ã¯ã“ã‚Œã‚’å‘¼ã³å‡ºã™
         /// </summary>
         /// <param name="dataNumber"></param>
         /// <param name="fileName"></param>
@@ -53,9 +52,9 @@ namespace GamesKeystoneFramework.Core.Save
             }
         }
         /// <summary>
-        /// ƒZ[ƒuƒf[ƒ^‚Ì‰Šú‰»‚ğs‚¤
+        /// ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã®åˆæœŸåŒ–ã‚’è¡Œã†
         /// </summary>
-        /// <param name="dataNumber">ƒf[ƒ^‚Ì”Ô†</param>
+        /// <param name="dataNumber">ãƒ‡ãƒ¼ã‚¿ã®ç•ªå·</param>
         /// <param name="fileName"></param>
         public void ResetData(int dataNumber, string fileName = "SaveData")
         {

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GamesKeystoneFramework.Core
+namespace GamesKeystoneFramework.Core.Interface
 {
     public interface IInputInterface<T>
     {

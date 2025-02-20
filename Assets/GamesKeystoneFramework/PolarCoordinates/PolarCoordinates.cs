@@ -10,14 +10,14 @@ namespace GamesKeystoneFramework.PolarCoordinates
         public float Radius;
         public float Angle;
 
-        //ˆÈ‰º‚Í‹ß—’l‚ğ•Û‘¶‚µ‚Ä‚ ‚é
-        private static readonly PolarCoordinates upCoordinates = new(1, 1.5707964f);
-        private static readonly PolarCoordinates downCoordinates = new(1, -1.5707964f);
-        private static readonly PolarCoordinates leftCoordinates = new(1, 3.1415927f);
-        private static readonly PolarCoordinates rightCoordinates = new(1, 0);
+        //ä»¥ä¸‹ã¯è¿‘ä¼¼å€¤ã‚’ä¿å­˜ã—ã¦ã‚ã‚‹
+        private static readonly PolarCoordinates UpCoordinates = new(1, 1.5707964f);
+        private static readonly PolarCoordinates DownCoordinates = new(1, -1.5707964f);
+        private static readonly PolarCoordinates LeftCoordinates = new(1, 3.1415927f);
+        private static readonly PolarCoordinates RightCoordinates = new(1, 0);
 
         /// <summary>
-        /// ‰Šú‰»“™‚ğ‰Â”\‚É‚·‚é
+        /// åˆæœŸåŒ–ç­‰ã‚’å¯èƒ½ã«ã™ã‚‹
         /// </summary>
         /// <param name="radius"></param>
         /// <param name="angle"></param>
@@ -28,7 +28,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         }
 
         /// <summary>
-        /// ŒÂ•Ê‚Ì‰Šú‰»‚ğì‚é
+        /// å€‹åˆ¥ã®åˆæœŸåŒ–ã‚’ä½œã‚‹
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -66,9 +66,8 @@ namespace GamesKeystoneFramework.PolarCoordinates
 
 
         /// <summary>
-        /// Vector2‚É•ÏŠ·‚ğs‚¤
+        /// Vector2ã«å¤‰æ›ã‚’è¡Œã†
         /// </summary>
-        /// <param name="polarCoordinates"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2 ToVector2()
@@ -84,53 +83,53 @@ namespace GamesKeystoneFramework.PolarCoordinates
 
         public static PolarCoordinates Up
         {
-            get { return upCoordinates; }
+            get { return UpCoordinates; }
         }
         public static PolarCoordinates Down
         {
-            get { return downCoordinates; }
+            get { return DownCoordinates; }
         }
         public static PolarCoordinates Left
         {
-            get { return leftCoordinates; }
+            get { return LeftCoordinates; }
         }
         public static PolarCoordinates Right
         {
-            get { return rightCoordinates; }
+            get { return RightCoordinates; }
         }
 
-        //”Ä—pƒƒ\ƒbƒh‚È‚Ç‚ğ‘‚­
+        //æ±ç”¨ãƒ¡ã‚½ãƒƒãƒ‰ãªã©ã‚’æ›¸ã
         /// <summary>
-        /// 0‚©‚ç2ƒÎ‚ÌŠÔ‚É‚Ü‚Æ‚ß‚é
+        /// 0ã‹ã‚‰2Ï€ã®é–“ã«ã¾ã¨ã‚ã‚‹
         /// </summary>
         /// <param name="polarCoordinates"></param>
         /// <returns></returns>
         public PolarCoordinates AngleNormalizeZeroBase(PolarCoordinates polarCoordinates)
         {
-            Angle = polarCoordinates.Angle % (2 * Mathf.PI); // ‚Ü‚¸‚Í0‚©‚ç2ƒÎ‚Éû‚ß‚é
+            Angle = polarCoordinates.Angle % (2 * Mathf.PI); // ã¾ãšã¯0ã‹ã‚‰2Ï€ã«åã‚ã‚‹
             if (Angle > Mathf.PI)
-                Angle -= 2 * Mathf.PI; // 2ƒÎ‚ğˆø‚¢‚Ä-ƒÎ‚©‚çƒÎ‚Éû‚ß‚é
+                Angle -= 2 * Mathf.PI; // 2Ï€ã‚’å¼•ã„ã¦-Ï€ã‹ã‚‰Ï€ã«åã‚ã‚‹
             else if (Angle <= -Mathf.PI)
                 Angle += 2 * Mathf.PI;
             return new PolarCoordinates(polarCoordinates.Radius, Angle);
         }
 
         /// <summary>
-        /// -ƒÎ‚©‚çƒÎ‚ÌŠÔ‚ÉŠÛ‚ß‚é
+        /// -Ï€ã‹ã‚‰Ï€ã®é–“ã«ä¸¸ã‚ã‚‹
         /// </summary>
         /// <param name="polarCoordinates"></param>
         /// <returns></returns>
         public PolarCoordinates AngleNormalizePIMax(PolarCoordinates polarCoordinates)
         {
-            Angle = polarCoordinates.Angle % (2 * Mathf.PI); // ‚Ü‚¸‚Í0‚©‚ç2ƒÎ‚Éû‚ß‚é
+            Angle = polarCoordinates.Angle % (2 * Mathf.PI); // ã¾ãšã¯0ã‹ã‚‰2Ï€ã«åã‚ã‚‹
             if (Angle < 0)
-                Angle += 2 * Mathf.PI; // •‰‚ÌŠp“x‚ğ2ƒÎ‚ğ‰Á‚¦‚Ä³‚Ì”ÍˆÍ‚É
+                Angle += 2 * Mathf.PI; // è² ã®è§’åº¦ã‚’2Ï€ã‚’åŠ ãˆã¦æ­£ã®ç¯„å›²ã«
             return new PolarCoordinates(polarCoordinates.Radius, Angle);
         }
 
 
         /// <summary>
-        /// —v‘f‚ª“™‚µ‚¢‚©‚ğŠm”F‚·‚é
+        /// è¦ç´ ãŒç­‰ã—ã„ã‹ã‚’ç¢ºèªã™ã‚‹
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -143,7 +142,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         }
 
         /// <summary>
-        /// —v‘f‚ª“™‚µ‚¢‚©‚ğŠm”F‚·‚é
+        /// è¦ç´ ãŒç­‰ã—ã„ã‹ã‚’ç¢ºèªã™ã‚‹
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -154,7 +153,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         }
 
         /// <summary>
-        /// stringŒ`®‚Åo—Í‚·‚é
+        /// stringå½¢å¼ã§å‡ºåŠ›ã™ã‚‹
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -164,7 +163,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         }
 
         /// <summary>
-        /// StringŒ`®‚Åo—Í‚·‚é
+        /// Stringå½¢å¼ã§å‡ºåŠ›ã™ã‚‹
         /// </summary>
         /// <param name="format"></param>
         /// <param name="formatProvider"></param>
@@ -180,8 +179,8 @@ namespace GamesKeystoneFramework.PolarCoordinates
         }
 
         //
-        //ˆÈ‰º‚ÍZp‰‰Zq‚ÌƒI[ƒo[ƒ[ƒhB
-        //’Êí‚ÌVector2“™‚Æ“¯‚¶‚æ‚¤‚ÉŒvZ‚µ‚Ä‚àˆÓ–¡‚ª‚È‚­Œø—¦‚ªˆ«‚¢‚Ì‚ÅAŒvZ‚Ìƒ‹[ƒ‹‚ğ“Áê‚È‚à‚Ì‚É
+        //ä»¥ä¸‹ã¯ç®—è¡“æ¼”ç®—å­ã®ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰ã€‚
+        //é€šå¸¸ã®Vector2ç­‰ã¨åŒã˜ã‚ˆã†ã«è¨ˆç®—ã—ã¦ã‚‚æ„å‘³ãŒãªãåŠ¹ç‡ãŒæ‚ªã„ã®ã§ã€è¨ˆç®—ã®ãƒ«ãƒ¼ãƒ«ã‚’ç‰¹æ®Šãªã‚‚ã®ã«
         //
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static PolarCoordinates operator +(PolarCoordinates a, PolarCoordinates b)
@@ -250,7 +249,7 @@ namespace GamesKeystoneFramework.PolarCoordinates
         {
             return !(a == b);
         }
-        //ˆÃ–Ù“I‚ÈŒ^•ÏŠ·‚ğŒã‚Åì‚é(OŸŒ³‹ÉÀ•W)
+        //æš—é»™çš„ãªå‹å¤‰æ›ã‚’å¾Œã§ä½œã‚‹(ä¸‰æ¬¡å…ƒæ¥µåº§æ¨™)
     }
     public class PolarCoordinatesSupport
     {

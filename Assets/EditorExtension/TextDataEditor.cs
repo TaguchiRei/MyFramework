@@ -11,6 +11,9 @@ namespace GamesKeystoneFramework.TextSystem
         int indentation = 0;
         int selectNumber = 0;
         string[] options;
+        bool _collapsePattern = false;
+        Vector2 scrollPosition = Vector2.zero;
+        TextManagerBaseL textManager;
         [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
         public static void ShowWindow()
         {
@@ -20,7 +23,7 @@ namespace GamesKeystoneFramework.TextSystem
         {
             GUILayout.BeginHorizontal();
 
-            if (textDataScriptable != null)
+            if (textDataScriptable != null && options != null)
                 selectNumber = EditorGUILayout.Popup(selectNumber, options, GUILayout.Width(80));
 
             EditorGUI.BeginChangeCheck();
@@ -30,17 +33,17 @@ namespace GamesKeystoneFramework.TextSystem
                 false
                 );
 
-            #region ’†g‚Ì‚È‚¢ê‡‹ó”’‚Ìƒf[ƒ^‚Å–„‚ß‚é
+            #region ä¸­èº«ã®ãªã„å ´åˆç©ºç™½ã®ãƒ‡ãƒ¼ã‚¿ã§åŸ‹ã‚ã‚‹
             if (textDataScriptable != null)
             {
-                if (textDataScriptable.textDataList.Count == 0)
+                if (textDataScriptable.TextDataList.Count == 0)
                 {
                     Initialization();
                 }
             }
             #endregion
 
-            #region ƒAƒ^ƒbƒ`‚É‰Šú‰»
+            #region ã‚¢ã‚¿ãƒƒãƒæ™‚ã«åˆæœŸåŒ–
             if (EditorGUI.EndChangeCheck())
             {
                 selectNumber = 0;
@@ -55,52 +58,89 @@ namespace GamesKeystoneFramework.TextSystem
 
             if (textDataScriptable == null)
             {
-                GUILayout.Label("ƒXƒNƒŠƒvƒ^ƒuƒ‹ƒIƒuƒWƒFƒNƒg‚ğƒAƒ^ƒbƒ`");
+                GUILayout.Label("ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ–ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ã‚¢ã‚¿ãƒƒãƒ");
             }
             else
             {
-                #region ƒ‰ƒxƒ‹•ÒW
-                GUILayout.Label("•ÒW’†‚ÍƒCƒ“ƒXƒyƒNƒ^[‚©‚ç•ÒW‚µ‚È‚¢‚Å‚­‚¾‚³‚¢");
-                GUILayout.Label("ƒ‰ƒxƒ‹");
+                #region ãƒ©ãƒ™ãƒ«ç·¨é›†
+                GUILayout.Label("ç·¨é›†ä¸­ã¯ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼ã‹ã‚‰ç·¨é›†ã—ãªã„ã§ãã ã•ã„");
+                GUILayout.Label("ãƒ©ãƒ™ãƒ«");
                 EditorGUI.BeginChangeCheck();
-                textDataScriptable.textDataList[selectNumber].textLabel =
-                    EditorGUILayout.TextField(textDataScriptable.textDataList[selectNumber].textLabel,
+                textDataScriptable.TextDataList[selectNumber].TextLabel =
+                    EditorGUILayout.TextField(textDataScriptable.TextDataList[selectNumber].TextLabel,
                     GUILayout.ExpandWidth(false));
                 if (EditorGUI.EndChangeCheck())
                     OptionReset();
                 #endregion
 
-                #region –{‘Ì
-                for (int i = 0; i < textDataScriptable.textDataList[selectNumber].dataList.Count; i++)
+                #region æœ¬ä½“
+                _collapsePattern = false;
+                indentation = 0;
+                scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(position.height - 150));
+                for (int i = 0; i < textDataScriptable.TextDataList[selectNumber].DataList.Count; i++)
                 {
-                    var dl = textDataScriptable.textDataList[selectNumber].dataList;
+                    var dl = textDataScriptable.TextDataList[selectNumber].DataList;
                     GUILayout.BeginHorizontal();
-                    dl[i].dataType = (TextDataType)EditorGUILayout.EnumPopup(dl[i].dataType, GUILayout.Width(80));
-                    if (dl[i].dataType == TextDataType.QEnd || dl[i].dataType == TextDataType.TextEnd)
+                    dl[i].DataType = (TextDataType)EditorGUILayout.EnumPopup(dl[i].DataType, GUILayout.Width(80));
+                    if (dl[i].DataType == TextDataType.QEnd || dl[i].DataType == TextDataType.TextEnd)
                     {
                         GUI.enabled = false;
-                        dl[i].text = EditorGUILayout.TextField($"{dl[i].dataType}‚É‚Í“ü—Í‚Å‚«‚Ü‚¹‚ñ");
+                        if (dl[i].DataType == TextDataType.QEnd)
+                        {
+                            indentation--;
+                        }
+                        dl[i].Text = EditorGUILayout.TextField($"{dl[i].DataType}ã«ã¯å…¥åŠ›ã§ãã¾ã›ã‚“");
+                        GUI.enabled = true;
                     }
                     else
                     {
-                        dl[i].text = EditorGUILayout.TextField(dl[i].text, GUILayout.ExpandWidth(true));
+                        if (dl[i].DataType == TextDataType.Question)
+                        {
+                            indentation++;
+                        }
+                        GUILayout.Space(indentation * 20);
+                        dl[i].Text = EditorGUILayout.TextField(dl[i].Text, GUILayout.ExpandWidth(true));
                     }
-                    if (GUILayout.Button("~", GUILayout.Width(20), GUILayout.Height(20)))
+                    if (GUILayout.Button("Ã—", GUILayout.Width(20), GUILayout.Height(20)))
                     {
                         dl.RemoveAt(i);
                     }
-                    if (GUILayout.Button("«", GUILayout.Width(20), GUILayout.Height(20)))
+                    if (GUILayout.Button("â†“", GUILayout.Width(20), GUILayout.Height(20)))
                     {
-                        dl.Insert(i + 1, new TextData { dataType = TextDataType.Text, text = "" });
+                        dl.Insert(i + 1, new TextData { DataType = TextDataType.Text, Text = "" });
                     }
                     GUILayout.EndHorizontal();
                 }
+                GUILayout.EndScrollView();
+                #endregion
+
+                #region åˆæœŸåŒ–
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("ä¼šè©±ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’è¿½åŠ ", GUILayout.Width(120)))
+                {
+                    textDataScriptable.TextDataList.Add(new());
+                    OptionReset();
+                    Initialization(textDataScriptable.TextDataList.Count);
+                }
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("åˆæœŸåŒ–", GUILayout.Width(50), GUILayout.Height(20)))
+                {
+                    textDataScriptable.TextDataList[selectNumber].DataList.Clear();
+                    Initialization(selectNumber);
+                }
+
+                if (GUILayout.Button("å‰Šé™¤", GUILayout.Width(50), GUILayout.Height(20)))
+                {
+                    textDataScriptable.TextDataList.RemoveAt(selectNumber);
+                    OptionReset();
+                }
+                GUILayout.EndHorizontal();
                 #endregion
             }
         }
         void OptionReset()
         {
-            options = Enumerable.Range(0, textDataScriptable.textDataList
+            options = Enumerable.Range(0, textDataScriptable.TextDataList
                 .Count())
                 .Select(n => n.ToString())
                 .ToArray();
@@ -109,14 +149,19 @@ namespace GamesKeystoneFramework.TextSystem
                 StringBuilder sb = new();
                 sb.Append(options[i]);
                 sb.Append(" ");
-                sb.Append(textDataScriptable.textDataList[i].textLabel);
+                sb.Append(textDataScriptable.TextDataList[i].TextLabel);
                 options[i] = sb.ToString();
             }
+            if (selectNumber > options.Length - 1)
+            {
+                selectNumber = options.Length - 1;
+            }
         }
-        void Initialization()
+        void Initialization(int n = 0)
         {
+            textDataScriptable.TextDataList.Add(new());
             for (int i = 0; i < 3; i++)
-                textDataScriptable.textDataList[0].dataList.Add(new());
+                textDataScriptable.TextDataList[n].DataList.Add(new());
         }
     }
 }

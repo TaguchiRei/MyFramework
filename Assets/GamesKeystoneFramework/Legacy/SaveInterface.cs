@@ -4,7 +4,7 @@ using System;
 namespace GamesKeystoneFramework.Core
 {
     /// <summary>
-    /// ƒZ[ƒu‚·‚éƒtƒHƒ‹ƒ_‚ğenum‚Å‘I‘ğB
+    /// ã‚»ãƒ¼ãƒ–ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã‚’enumã§é¸æŠã€‚
     /// </summary>
     public enum SaveSubject
     {
@@ -17,11 +17,11 @@ namespace GamesKeystoneFramework.Core
         Conversation1 = 6,
         Conversation2 = 7,
         Conversation3 = 8,
-        other = 9,
+        Other = 9,
     }
     /// <summary>
-    /// •Û‘¶‚µ‚½‚¢ƒf[ƒ^‚Í•K‚¸‚±‚±‚ğ—˜—p‚µ‚Äì‚é‚±‚ÆB
-    /// ID‚Íd•¡‚µ‚Ä•t‚¯‚Ä‚Í‚¢‚¯‚È‚¢B
+    /// ä¿å­˜ã—ãŸã„ãƒ‡ãƒ¼ã‚¿ã¯å¿…ãšã“ã“ã‚’åˆ©ç”¨ã—ã¦ä½œã‚‹ã“ã¨ã€‚
+    /// IDã¯é‡è¤‡ã—ã¦ä»˜ã‘ã¦ã¯ã„ã‘ãªã„ã€‚
     /// </summary>
     [Serializable]
     public struct Data
@@ -33,9 +33,9 @@ namespace GamesKeystoneFramework.Core
     }
 
     /// <summary>
-    /// ƒZ[ƒuƒ}ƒl[ƒWƒƒ[‚Ìì¬‚Ég‚¤
+    /// ã‚»ãƒ¼ãƒ–ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã®ä½œæˆã«ä½¿ã†
     /// </summary>
-    /// <typeparam name="T">Data‚ğw’è</typeparam>
+    /// <typeparam name="T">Dataã‚’æŒ‡å®š</typeparam>
     interface ISaveInterface <T>
     {
 
@@ -44,7 +44,7 @@ namespace GamesKeystoneFramework.Core
     }
 
     /// <summary>
-    ///@ƒZ[ƒuƒf[ƒ^‚ğ‚ÂƒIƒuƒWƒFƒNƒg‚É•t—^‚·‚é
+    ///ã€€ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã‚’æŒã¤ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ä»˜ä¸ã™ã‚‹
     /// </summary>
     /// <typeparam name="T"></typeparam>
     interface IHaveSaveData<T>

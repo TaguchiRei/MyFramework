@@ -10,18 +10,18 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
     public abstract class SingleSaveBase : MonoBehaviour
     {
         /// <summary>
-        /// ƒf[ƒ^‚ğŒÄ‚Ño‚·‚½‚ß‚ÌƒfƒŠƒQ[ƒgB
-        /// ‚±‚±‚ÉSendƒƒ\ƒbƒh‚ğW‚ß‚Ä‚¨‚¯‚ÎŠy‚ÉW‚ß‚ç‚ê‚é
+        /// ãƒ‡ãƒ¼ã‚¿ã‚’å‘¼ã³å‡ºã™ãŸã‚ã®ãƒ‡ãƒªã‚²ãƒ¼ãƒˆã€‚
+        /// ã“ã“ã«Sendãƒ¡ã‚½ãƒƒãƒ‰ã‚’é›†ã‚ã¦ãŠã‘ã°æ¥½ã«é›†ã‚ã‚‰ã‚Œã‚‹
         /// </summary>
         public abstract List<Func<List<Data>>> CalledData { get; set; }
 
         /// <summary>
-        /// ÀÛ‚É•Û‘¶‚·‚éƒf[ƒ^‚ğ“ü‚ê‚éB
+        /// å®Ÿéš›ã«ä¿å­˜ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œã‚‹ã€‚
         /// </summary>
         public abstract List<Data> DataContents { get; set; }
 
         /// <summary>
-        /// ƒf[ƒ^‚ğ‚·‚×‚Äæ“¾‚µ‚Ü‚·B•K—v‚È\‘¢‘Ì‚ªˆê‚Â‚È‚çˆø”‚É\‘¢‘Ì‚ÌID‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+        /// ãƒ‡ãƒ¼ã‚¿ã‚’ã™ã¹ã¦å–å¾—ã—ã¾ã™ã€‚å¿…è¦ãªæ§‹é€ ä½“ãŒä¸€ã¤ãªã‚‰å¼•æ•°ã«æ§‹é€ ä½“ã®IDã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
         /// </summary>
         /// <returns></returns>
         public List<Data> Call()
@@ -30,7 +30,7 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
         }
 
         /// <summary>
-        /// ƒf[ƒ^‚ğˆê‚Âw’è‚µ‚Äæ“¾‚µ‚Ü‚·B
+        /// ãƒ‡ãƒ¼ã‚¿ã‚’ä¸€ã¤æŒ‡å®šã—ã¦å–å¾—ã—ã¾ã™ã€‚
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -39,7 +39,7 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
             if(!DataContents.Any(d => d.ID == id))
             {
 #if UNITY_EDITOR
-                Debug.Log($"‚»‚ÌID‚Í‘¶İ‚µ‚Ü‚¹‚ñ\nID:{id}");
+                Debug.Log($"ãã®IDã¯å­˜åœ¨ã—ã¾ã›ã‚“\nID:{id}");
 #endif
                 return default;
             }
@@ -47,9 +47,9 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
         }
 
         /// <summary>
-        /// ƒZ[ƒu‚·‚éƒf[ƒ^‚ğ‘—M‚µ‚Ü‚·Bˆø”‚É‚ÍData\‘¢‘Ì‚ÌƒŠƒXƒg‚ğ“ü‚ê‚Ä‚­‚¾‚³‚¢
+        /// ã‚»ãƒ¼ãƒ–ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’é€ä¿¡ã—ã¾ã™ã€‚å¼•æ•°ã«ã¯Dataæ§‹é€ ä½“ã®ãƒªã‚¹ãƒˆã‚’å…¥ã‚Œã¦ãã ã•ã„
         /// </summary>
-        /// <param name="sendSaveData">Data\‘¢‘Ì‚ÌƒŠƒXƒg(DataContents)</param>
+        /// <param name="sendSaveData">Dataæ§‹é€ ä½“ã®ãƒªã‚¹ãƒˆ(DataContents)</param>
         public void Send(List<Data> sendSaveData)
         {
             foreach (var data in sendSaveData)
@@ -58,19 +58,19 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
                 {
                     DataContents[DataContents.FindIndex(d => d.ID == data.ID)] = data;
 #if UNITY_EDITOR
-                    Debug.Log($"ƒf[ƒ^‚Ì“ü‚ê‘Ö‚¦‚É¬Œ÷‚µ‚Ü‚µ‚½\nID:{data.ID}");
+                    Debug.Log($"ãƒ‡ãƒ¼ã‚¿ã®å…¥ã‚Œæ›¿ãˆã«æˆåŠŸã—ã¾ã—ãŸ\nID:{data.ID}");
 #endif
                 }
                 else
                 {
                     DataContents.Add(data);
 #if UNITY_EDITOR
-                    Debug.Log($"ƒf[ƒ^‚Ì’Ç‰Á‚É¬Œ÷‚µ‚Ü‚µ‚½\nID:{data.ID}");
+                    Debug.Log($"ãƒ‡ãƒ¼ã‚¿ã®è¿½åŠ ã«æˆåŠŸã—ã¾ã—ãŸ\nID:{data.ID}");
 #endif
                 }
             }
 #if UNITY_EDITOR
-            Debug.Log($"ƒf[ƒ^‚ÌƒŠƒXƒg‰»‚ªŠ®—¹‚µ‚Ü‚µ‚½");
+            Debug.Log($"ãƒ‡ãƒ¼ã‚¿ã®ãƒªã‚¹ãƒˆåŒ–ãŒå®Œäº†ã—ã¾ã—ãŸ");
 #endif
         }
 
@@ -86,7 +86,7 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
             if (!File.Exists(path))
             {
 #if UNITY_EDITOR
-                Debug.LogWarning($"{path}‚Éƒtƒ@ƒCƒ‹‚ª‘¶İ‚µ‚Ü‚¹‚ñB");
+                Debug.LogWarning($"{path}ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“ã€‚");
 #endif
                 return;
             }
@@ -97,7 +97,7 @@ namespace GamesKeystoneFramework.SaveSystem.singleSave
         }
 
         /// <summary>
-        /// ƒf[ƒ^‚ğjson‚É•Û‘¶‚Å‚«‚éŒ`‚É‚·‚é
+        /// ãƒ‡ãƒ¼ã‚¿ã‚’jsonã«ä¿å­˜ã§ãã‚‹å½¢ã«ã™ã‚‹
         /// </summary>
         [Serializable]
         public class WrapperClass

@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using GamesKeystoneFramework.Core;
+using GamesKeystoneFramework.Core.Interface;
 using System.Collections.Generic;
 namespace GamesKeystoneFramework.Input
 {
