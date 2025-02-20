@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using GamesKeystoneFramework.Core.Text;
 namespace GamesKeystoneFramework.TextSystem
 {
     public abstract class TextManagerBase : MonoBehaviour

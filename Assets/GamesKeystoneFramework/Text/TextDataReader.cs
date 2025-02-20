@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using GamesKeystoneFramework.Core.Text;
 namespace GamesKeystoneFramework.TextSystem
 {
     public class TextDataReader : MonoBehaviour
@@ -14,12 +15,7 @@ namespace GamesKeystoneFramework.TextSystem
             textData = JsonUtility.FromJson<TextWrpper>(File.ReadAllText(path)).wrpperData;
         }
     }
-    [Serializable]
-    public class TextData
-    {
-        public TextDataType dataType;
-        public string text;
-    }
+
     [Serializable]
     class TextWrpper
     {
