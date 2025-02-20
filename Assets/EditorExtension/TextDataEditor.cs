@@ -14,11 +14,14 @@ namespace editorExtension
         private TextDataScriptable _textDataScriptable;
         private int _indentation;
         private int _selectNumber;
-        string[] _options;
-        bool _collapsePattern;
+        private string _line;
+        private string[] _options;
+        private bool _collapsePattern;
         private bool _checkNull;
-        Vector2 _scrollPosition = Vector2.zero;
-        TextManagerBase _textManager;
+        private Vector2 _scrollPosition = Vector2.zero;
+        private Color _textColor;
+        private TextManagerBase _textManager;
+        private GUIStyle _textStyle;
 
         [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
         public static void ShowWindow()
@@ -36,6 +39,13 @@ namespace editorExtension
 
         private void OnGUI()
         {
+            _line = $"<color=#{ColorUtility.ToHtmlStringRGBA(_textColor)}>｜</color>｜｜";
+            var st = new StringBuilder();
+            for (int i = 0; i < 5; i++)
+            {
+                st.Append(_line);
+            }
+            _line = st.ToString();
             _checkNull = _textDataScriptable == null;
             GUILayout.BeginHorizontal();
 
@@ -96,7 +106,10 @@ namespace editorExtension
                 #endregion
 
                 #region 本体
-
+                _textStyle = new (GUI.skin.label)
+                {
+                    richText = true
+                };
                 _collapsePattern = false;
                 _indentation = 0;
                 _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(position.height - 150));
@@ -112,7 +125,7 @@ namespace editorExtension
                             _indentation -= 2;
                         }
                         GUI.enabled = false;
-                        GUILayout.Label("｜｜｜｜｜｜｜｜｜｜", GUILayout.Width(_indentation * 20));
+                        GUILayout.Label(_line,_textStyle, GUILayout.Width(_indentation * 20));
                         dl[i].Text = EditorGUILayout.TextField($"{dl[i].DataType}には入力できません");
                         GUI.enabled = true;
                     }
@@ -122,7 +135,7 @@ namespace editorExtension
                         {
                             _indentation--;
                         }
-                        GUILayout.Label("｜｜｜｜｜｜｜｜｜｜", GUILayout.Width(_indentation * 20));
+                        GUILayout.Label(_line,_textStyle, GUILayout.Width(_indentation * 20));
                         if (dl[i].DataType == TextDataType.Branch)
                         {
                             _indentation++;
@@ -130,6 +143,10 @@ namespace editorExtension
                         else if (dl[i].DataType == TextDataType.Question)
                         {
                             _indentation += 2;
+                        }
+                        else
+                        {
+                            
                         }
 
                         dl[i].Text = EditorGUILayout.TextField(dl[i].Text, GUILayout.ExpandWidth(true));
@@ -153,7 +170,7 @@ namespace editorExtension
                 #endregion
 
                 #region 各種ボタン
-
+                _textColor = EditorGUILayout.ColorField(_textColor,GUILayout.Width(80));
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("会話パターンを追加", GUILayout.Width(120)))
                 {

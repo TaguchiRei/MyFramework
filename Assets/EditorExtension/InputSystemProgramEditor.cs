@@ -59,7 +59,7 @@ namespace GamesKeystoneFramework.Core.Input
                     }
                     else
                     {
-                        programText = MakeProgrameLegacy(className, mapName, actionName);
+                        programText = MakeProgramLegacy(className, mapName, actionName);
                     }
                     EditorGUI.FocusTextInControl(null);
                     Repaint();
@@ -74,7 +74,7 @@ namespace GamesKeystoneFramework.Core.Input
             }
             GUILayout.EndHorizontal();
         }
-        private string MakeProgrameLegacy(string className, List<string> mapName, List<List<string>> actionName)
+        private string MakeProgramLegacy(string className, List<string> mapName, List<List<string>> actionName)
         {
             string returnString =
                 "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\nusing UnityEngine.InputSystem\n\npublic class " 
