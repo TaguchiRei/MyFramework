@@ -83,7 +83,3 @@ MonoBehaviour:
       Text: "\u3067\u306F\u66F4\u65B0\u306B\u3064\u3044\u3066\u306E\u8AAC\u660E\u3092\u7D42\u308F\u308A\u307E\u3059"
       UseEvent: 0
       MethodNumber: 0
-    - DataType: 0
-      Text: "\u3042\u308A\u304C\u3068\u3046\u3054\u3056\u3044\u307E\u3057\u305F"
-      UseEvent: 0
-      MethodNumber: 0

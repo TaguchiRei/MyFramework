@@ -20,9 +20,9 @@ namespace GamesKeystoneFramework.Core.Text
     [Serializable]
     public class TextData
     {
-        public TextDataType DataType;
-        public string Text;
-        public bool UseEvent;
-        public int MethodNumber;
+        public TextDataType DataType = TextDataType.Text;
+        public string Text = "";
+        public bool UseEvent  = false;
+        public int MethodNumber = 0;
     }
 }
