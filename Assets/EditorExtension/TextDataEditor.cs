@@ -1,8 +1,6 @@
-using System;
 using GamesKeystoneFramework.Core.Text;
 using System.Linq;
 using System.Text;
-using GamesKeystoneFramework.Text;
 using GamesKeystoneFramework.TextSystem;
 using UnityEditor;
 using UnityEngine;
@@ -46,6 +44,8 @@ namespace editorExtension
 
         private void OnGUI()
         {
+            if(_textDataScriptableObject != null)
+                _textDataScriptableObject.Update();
             _line = $"<color=#{ColorUtility.ToHtmlStringRGBA(_textColor)}>｜</color>｜｜";
             var st = new StringBuilder();
             for (int i = 0; i < 5; i++)
@@ -100,22 +100,22 @@ namespace editorExtension
             {
                 GUILayout.Label("スクリプタブルオブジェクトをアタッチ");
             }
-            else
+            else if (_textDataScriptable.TextDataList != null)
             {
                 #region ラベル編集
 
                 GUILayout.Label("編集中はインスペクターから編集しないでください");
-                
+
                 EditorGUI.BeginChangeCheck();
-                EditorGUILayout.PropertyField(_labelProperty,true);
+                EditorGUILayout.PropertyField(_labelProperty, true);
                 if (EditorGUI.EndChangeCheck())
                     OptionReset();
-                
+
                 GUILayout.BeginHorizontal();
                 _numberOfText = EditorGUILayout.IntSlider("一行の文字数", _numberOfText, 10, 200);
                 _numberOfSelection = EditorGUILayout.IntSlider("選択肢の文字数", _numberOfSelection, 5, 100);
                 GUILayout.EndHorizontal();
-                
+
                 #endregion
 
                 #region 本体
@@ -129,13 +129,13 @@ namespace editorExtension
                 for (int i = 0; i < _textDataScriptable.TextDataList[_selectNumber].DataList.Count; i++)
                 {
                     var dl = _textDataScriptable.TextDataList[_selectNumber].DataList;
-                    
+
                     var data = _textDataProperty.GetArrayElementAtIndex(i);
                     var dataType = data.FindPropertyRelative("DataType");
                     var text = data.FindPropertyRelative("Text");
                     var useEvent = data.FindPropertyRelative("UseEvent");
                     var methodNum = data.FindPropertyRelative("MethodNumber");
-                    
+
                     if (dl[i].DataType == TextDataType.Text)
                     {
                         if (dl[i].Text.Length > _numberOfText)
@@ -150,9 +150,10 @@ namespace editorExtension
                             GUILayout.Label($"　　　{i}行目文字数超過");
                         }
                     }
+
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label(i.ToString(),GUILayout.Width(30));
-                    EditorGUILayout.PropertyField(dataType,GUIContent.none,GUILayout.Width(80));
+                    GUILayout.Label(i.ToString(), GUILayout.Width(30));
+                    EditorGUILayout.PropertyField(dataType, GUIContent.none, GUILayout.Width(80));
                     if (dl[i].DataType == TextDataType.QEnd || dl[i].DataType == TextDataType.TextEnd)
                     {
                         if (dl[i].DataType == TextDataType.QEnd)
@@ -162,11 +163,11 @@ namespace editorExtension
 
                         GUI.enabled = false;
                         GUILayout.Label(_line, _textStyle, GUILayout.Width(_indentation * 20));
-                        dl[i].Text = EditorGUILayout.TextField($"{dl[i].DataType}には入力できません");
+                        EditorGUILayout.TextField($"{dl[i].DataType}には入力できません");
                         GUI.enabled = true;
                     }
                     else
-                    { 
+                    {
                         if (dl[i].DataType == TextDataType.Branch)
                         {
                             _indentation--;
@@ -182,27 +183,28 @@ namespace editorExtension
                             _indentation += 2;
                         }
 
-                        dl[i].Text = EditorGUILayout.TextField(dl[i].Text, GUILayout.ExpandWidth(true));
+                        EditorGUILayout.PropertyField(text, GUIContent.none, GUILayout.ExpandWidth(true));
                     }
-
 
                     if (dl[i].UseEvent)
                     {
-                        dl[i].MethodNumber = EditorGUILayout.IntField(dl[i].MethodNumber, GUILayout.Width(40));
+                        EditorGUILayout.PropertyField(methodNum, GUIContent.none, GUILayout.Width(40));
                     }
-                    dl[i].UseEvent = EditorGUILayout.Toggle(dl[i].UseEvent, GUILayout.Width(20));
 
-                    
+                    EditorGUILayout.PropertyField(useEvent, GUIContent.none, GUILayout.Width(20));
 
 
                     if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(20)))
                     {
                         dl.RemoveAt(i);
+                        _textDataListProperty.DeleteArrayElementAtIndex(i);
                     }
 
                     if (GUILayout.Button("↓", GUILayout.Width(20), GUILayout.Height(20)))
                     {
                         dl.Insert(i + 1, new TextData { DataType = TextDataType.Text, Text = "" });
+                        _textDataListProperty.InsertArrayElementAtIndex(i);
+                        LoadScriptableObject();
                     }
 
                     GUILayout.EndHorizontal();
@@ -213,12 +215,6 @@ namespace editorExtension
                 #endregion
 
                 #region 各種ボタン
-
-                if (GUILayout.Button("保存", GUILayout.Width(40), GUILayout.Height(20)))
-                {
-                    Undo.RecordObject(_textDataScriptable, "ScriptableObject保存");
-                    EditorUtility.SetDirty(_textDataScriptable);
-                }
 
                 _textColor = EditorGUILayout.ColorField(_textColor, GUILayout.Width(80));
                 GUILayout.BeginHorizontal();
@@ -254,6 +250,11 @@ namespace editorExtension
                 GUILayout.EndHorizontal();
 
                 #endregion
+                if (_textDataScriptableObject != null && _textDataScriptableObject.ApplyModifiedProperties())
+                {
+                    EditorUtility.SetDirty(_textDataScriptableObject.targetObject);
+                    AssetDatabase.SaveAssets();
+                }
             }
         }
 
