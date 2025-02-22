@@ -14,6 +14,7 @@ namespace editorExtension
         private TextDataScriptable _textDataScriptable;
         private int _indentation;
         private int _selectNumber;
+        [Range(1,100)] private int _numberOfCharacters;
         private string _line;
         private string[] _options;
         private bool _collapsePattern;
@@ -21,11 +22,8 @@ namespace editorExtension
         private Color _textColor;
         private TextManagerBase _textManager;
         private GUIStyle _textStyle;
-
-        private SerializedObject _textObject;
-        private SerializedProperty _textDataProperty;
-        private SerializedProperty _textDataListProperty;
-        private SerializedProperty _eventProperty;
+        
+        
 
         [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
         public static void ShowWindow()
@@ -38,14 +36,6 @@ namespace editorExtension
             _selectNumber = 0;
             _indentation = 0;
             _collapsePattern = false;
-            if (_textDataScriptable != null)
-            {
-                _textObject = new SerializedObject(_textDataScriptable);
-                _textDataProperty = _textObject.FindProperty("TextDataList");
-                _textDataListProperty = _textDataProperty
-                    .GetArrayElementAtIndex(_selectNumber)
-                    .FindPropertyRelative("DataList");
-            }
         }
 
         private void OnGUI()
@@ -78,8 +68,6 @@ namespace editorExtension
                 _selectNumber = 0;
                 if (_textDataScriptable != null)
                 {
-                    _textObject = new SerializedObject(_textDataScriptable);
-                    _textDataProperty = _textObject.FindProperty("TextDataList");
                     OptionReset();
                 }
             }
@@ -166,21 +154,15 @@ namespace editorExtension
                         dl[i].Text = EditorGUILayout.TextField(dl[i].Text, GUILayout.ExpandWidth(true));
                     }
 
-                    if (dl[i].DataType == TextDataType.Text)
+
+                    if (dl[i].UseEvent)
                     {
-                        dl[i].UseEvent = EditorGUILayout.Toggle(dl[i].UseEvent, GUILayout.Width(20));
-                        if (dl[i].UseEvent)
-                        {
-                            _eventProperty = _textDataListProperty
-                                .GetArrayElementAtIndex(i)
-                                .FindPropertyRelative("Event");
-                            EditorGUILayout.PropertyField(_eventProperty);
-                        }
+                        dl[i].MethodNumber = EditorGUILayout.IntField(dl[i].MethodNumber, GUILayout.Width(40));
                     }
-                    else
-                    {
-                        GUILayout.Space(20);
-                    }
+                    dl[i].UseEvent = EditorGUILayout.Toggle(dl[i].UseEvent, GUILayout.Width(20));
+
+                    
+
 
                     if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(20)))
                     {
