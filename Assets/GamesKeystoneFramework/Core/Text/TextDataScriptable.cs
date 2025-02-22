@@ -2,8 +2,6 @@ using GamesKeystoneFramework.TextSystem;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace GamesKeystoneFramework.Core.Text
 {

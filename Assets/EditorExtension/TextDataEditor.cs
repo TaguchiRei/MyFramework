@@ -1,3 +1,4 @@
+using System;
 using GamesKeystoneFramework.Core.Text;
 using System.Linq;
 using System.Text;
@@ -14,16 +15,18 @@ namespace editorExtension
         private TextDataScriptable _textDataScriptable;
         private int _indentation;
         private int _selectNumber;
-        [Range(1,100)] private int _numberOfCharacters;
+        private int _numberOfText = 20;
+        private int _numberOfSelection = 5;
         private string _line;
         private string[] _options;
-        private bool _collapsePattern;
         private Vector2 _scrollPosition = Vector2.zero;
         private Color _textColor;
-        private TextManagerBase _textManager;
         private GUIStyle _textStyle;
         
-        
+        SerializedObject _textDataScriptableObject;
+        SerializedProperty _textDataListProperty;
+        SerializedProperty _textDataProperty;
+        SerializedProperty _labelProperty;
 
         [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
         public static void ShowWindow()
@@ -35,7 +38,10 @@ namespace editorExtension
         {
             _selectNumber = 0;
             _indentation = 0;
-            _collapsePattern = false;
+            if (_textDataScriptableObject != null)
+            {
+                LoadScriptableObject();
+            }
         }
 
         private void OnGUI()
@@ -68,6 +74,7 @@ namespace editorExtension
                 _selectNumber = 0;
                 if (_textDataScriptable != null)
                 {
+                    LoadScriptableObject();
                     OptionReset();
                 }
             }
@@ -78,7 +85,7 @@ namespace editorExtension
 
             if (_textDataScriptable != null)
             {
-                if (_textDataScriptable.TextDataList.Count == 0)
+                if (_textDataScriptable.TextDataList == null)
                 {
                     Initialization();
                 }
@@ -98,14 +105,17 @@ namespace editorExtension
                 #region ラベル編集
 
                 GUILayout.Label("編集中はインスペクターから編集しないでください");
-                GUILayout.Label("ラベル");
+                
                 EditorGUI.BeginChangeCheck();
-                _textDataScriptable.TextDataList[_selectNumber].TextLabel =
-                    EditorGUILayout.TextField(_textDataScriptable.TextDataList[_selectNumber].TextLabel,
-                        GUILayout.ExpandWidth(false));
+                EditorGUILayout.PropertyField(_labelProperty,true);
                 if (EditorGUI.EndChangeCheck())
                     OptionReset();
-
+                
+                GUILayout.BeginHorizontal();
+                _numberOfText = EditorGUILayout.IntSlider("一行の文字数", _numberOfText, 10, 200);
+                _numberOfSelection = EditorGUILayout.IntSlider("選択肢の文字数", _numberOfSelection, 5, 100);
+                GUILayout.EndHorizontal();
+                
                 #endregion
 
                 #region 本体
@@ -114,14 +124,35 @@ namespace editorExtension
                 {
                     richText = true
                 };
-                _collapsePattern = false;
                 _indentation = 0;
                 _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(position.height - 150));
                 for (int i = 0; i < _textDataScriptable.TextDataList[_selectNumber].DataList.Count; i++)
                 {
                     var dl = _textDataScriptable.TextDataList[_selectNumber].DataList;
+                    
+                    var data = _textDataProperty.GetArrayElementAtIndex(i);
+                    var dataType = data.FindPropertyRelative("DataType");
+                    var text = data.FindPropertyRelative("Text");
+                    var useEvent = data.FindPropertyRelative("UseEvent");
+                    var methodNum = data.FindPropertyRelative("MethodNumber");
+                    
+                    if (dl[i].DataType == TextDataType.Text)
+                    {
+                        if (dl[i].Text.Length > _numberOfText)
+                        {
+                            GUILayout.Label($"　　　{i}行目文字数超過");
+                        }
+                    }
+                    else if (dl[i].DataType == TextDataType.Branch)
+                    {
+                        if (dl[i].Text.Length > _numberOfSelection)
+                        {
+                            GUILayout.Label($"　　　{i}行目文字数超過");
+                        }
+                    }
                     GUILayout.BeginHorizontal();
-                    dl[i].DataType = (TextDataType)EditorGUILayout.EnumPopup(dl[i].DataType, GUILayout.Width(80));
+                    GUILayout.Label(i.ToString(),GUILayout.Width(30));
+                    EditorGUILayout.PropertyField(dataType,GUIContent.none,GUILayout.Width(80));
                     if (dl[i].DataType == TextDataType.QEnd || dl[i].DataType == TextDataType.TextEnd)
                     {
                         if (dl[i].DataType == TextDataType.QEnd)
@@ -135,7 +166,7 @@ namespace editorExtension
                         GUI.enabled = true;
                     }
                     else
-                    {
+                    { 
                         if (dl[i].DataType == TextDataType.Branch)
                         {
                             _indentation--;
@@ -247,8 +278,20 @@ namespace editorExtension
             }
         }
 
+        void LoadScriptableObject()
+        {
+            _textDataScriptableObject = new(_textDataScriptable);
+            _textDataListProperty = _textDataScriptableObject.FindProperty("TextDataList");
+            _textDataProperty = _textDataListProperty
+                .GetArrayElementAtIndex(_selectNumber)
+                .FindPropertyRelative("DataList");
+            _labelProperty = _textDataListProperty.GetArrayElementAtIndex(_selectNumber).FindPropertyRelative("TextLabel");
+        }
+        
         void Initialization(int n = 0)
         {
+            Debug.Log(_textDataScriptable.TextDataList.Count + " " + n);
+            _textDataScriptable.TextDataList[n].DataList = new();
             for (int i = 0; i < 3; i++)
                 _textDataScriptable.TextDataList[n].DataList.Add(new());
         }

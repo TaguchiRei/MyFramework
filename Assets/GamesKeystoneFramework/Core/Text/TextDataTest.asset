@@ -13,20 +13,13 @@ MonoBehaviour:
   m_Name: TextDataTest
   m_EditorClassIdentifier: 
   TextDataList:
-  - TextLabel: 
+  - TextLabel: default
     DataList:
     - DataType: 0
       Text: 
-      Event:
-        m_PersistentCalls:
-          m_Calls: []
+      UseEvent: 0
+      MethodNumber: 0
     - DataType: 0
       Text: 
-      Event:
-        m_PersistentCalls:
-          m_Calls: []
-    - DataType: 0
-      Text: 
-      Event:
-        m_PersistentCalls:
-          m_Calls: []
+      UseEvent: 0
+      MethodNumber: 0
