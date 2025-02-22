@@ -1,4 +1,3 @@
-using System;
 using GamesKeystoneFramework.Core.Text;
 using System.Linq;
 using System.Text;
@@ -18,7 +17,6 @@ namespace editorExtension
         private string _line;
         private string[] _options;
         private bool _collapsePattern;
-        private bool _checkNull;
         private Vector2 _scrollPosition = Vector2.zero;
         private Color _textColor;
         private TextManagerBase _textManager;
@@ -26,6 +24,7 @@ namespace editorExtension
 
         private SerializedObject _textObject;
         private SerializedProperty _textDataProperty;
+        private SerializedProperty _textDataListProperty;
         private SerializedProperty _eventProperty;
 
         [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
@@ -36,10 +35,17 @@ namespace editorExtension
 
         private void OnEnable()
         {
-            _checkNull = false;
             _selectNumber = 0;
             _indentation = 0;
             _collapsePattern = false;
+            if (_textDataScriptable != null)
+            {
+                _textObject = new SerializedObject(_textDataScriptable);
+                _textDataProperty = _textObject.FindProperty("TextDataList");
+                _textDataListProperty = _textDataProperty
+                    .GetArrayElementAtIndex(_selectNumber)
+                    .FindPropertyRelative("DataList");
+            }
         }
 
         private void OnGUI()
@@ -55,7 +61,7 @@ namespace editorExtension
 
             GUILayout.BeginHorizontal();
 
-            if (!_checkNull && _options != null)
+            if (_textDataScriptable != null && _options != null)
                 _selectNumber = EditorGUILayout.Popup(_selectNumber, _options, GUILayout.Width(80));
 
             EditorGUI.BeginChangeCheck();
@@ -69,29 +75,20 @@ namespace editorExtension
 
             if (EditorGUI.EndChangeCheck())
             {
-                Debug.Log("Initialize");
                 _selectNumber = 0;
-                if (!_checkNull)
+                if (_textDataScriptable != null)
                 {
                     _textObject = new SerializedObject(_textDataScriptable);
                     _textDataProperty = _textObject.FindProperty("TextDataList");
                     OptionReset();
                 }
-
-                if (_textDataScriptable == null)
-                    Debug.Log("TextDataScriptable is null");
-                if (_textDataProperty == null)
-                    Debug.Log("TextDataProperty is null");
             }
 
             #endregion
 
-
-            _checkNull = _textDataScriptable == null;
-
             #region 中身のない場合空白のデータで埋める
 
-            if (!_checkNull)
+            if (_textDataScriptable != null)
             {
                 if (_textDataScriptable.TextDataList.Count == 0)
                 {
@@ -174,9 +171,7 @@ namespace editorExtension
                         dl[i].UseEvent = EditorGUILayout.Toggle(dl[i].UseEvent, GUILayout.Width(20));
                         if (dl[i].UseEvent)
                         {
-                            _eventProperty = _textDataProperty
-                                .GetArrayElementAtIndex(_selectNumber)
-                                .FindPropertyRelative("DataList")
+                            _eventProperty = _textDataListProperty
                                 .GetArrayElementAtIndex(i)
                                 .FindPropertyRelative("Event");
                             EditorGUILayout.PropertyField(_eventProperty);
