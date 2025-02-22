@@ -6,6 +6,7 @@ using GamesKeystoneFramework.Text;
 using GamesKeystoneFramework.TextSystem;
 using UnityEditor;
 using UnityEngine;
+using ColorUtility = UnityEngine.ColorUtility;
 
 namespace editorExtension
 {
@@ -22,6 +23,10 @@ namespace editorExtension
         private Color _textColor;
         private TextManagerBase _textManager;
         private GUIStyle _textStyle;
+
+        private SerializedObject _textObject;
+        private SerializedProperty _textDataProperty;
+        private SerializedProperty _eventProperty;
 
         [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
         public static void ShowWindow()
@@ -45,8 +50,9 @@ namespace editorExtension
             {
                 st.Append(_line);
             }
+
             _line = st.ToString();
-            _checkNull = _textDataScriptable == null;
+
             GUILayout.BeginHorizontal();
 
             if (!_checkNull && _options != null)
@@ -58,6 +64,30 @@ namespace editorExtension
                 typeof(TextDataScriptable),
                 false
             );
+
+            #region アタッチ時に初期化
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Debug.Log("Initialize");
+                _selectNumber = 0;
+                if (!_checkNull)
+                {
+                    _textObject = new SerializedObject(_textDataScriptable);
+                    _textDataProperty = _textObject.FindProperty("TextDataList");
+                    OptionReset();
+                }
+
+                if (_textDataScriptable == null)
+                    Debug.Log("TextDataScriptable is null");
+                if (_textDataProperty == null)
+                    Debug.Log("TextDataProperty is null");
+            }
+
+            #endregion
+
+
+            _checkNull = _textDataScriptable == null;
 
             #region 中身のない場合空白のデータで埋める
 
@@ -71,22 +101,10 @@ namespace editorExtension
 
             #endregion
 
-            #region アタッチ時に初期化
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                _selectNumber = 0;
-                if (!_checkNull)
-                {
-                    OptionReset();
-                }
-            }
-
-            #endregion
 
             GUILayout.EndHorizontal();
 
-            if (_checkNull)
+            if (_textDataScriptable == null)
             {
                 GUILayout.Label("スクリプタブルオブジェクトをアタッチ");
             }
@@ -106,7 +124,8 @@ namespace editorExtension
                 #endregion
 
                 #region 本体
-                _textStyle = new (GUI.skin.label)
+
+                _textStyle = new(GUI.skin.label)
                 {
                     richText = true
                 };
@@ -124,8 +143,9 @@ namespace editorExtension
                         {
                             _indentation -= 2;
                         }
+
                         GUI.enabled = false;
-                        GUILayout.Label(_line,_textStyle, GUILayout.Width(_indentation * 20));
+                        GUILayout.Label(_line, _textStyle, GUILayout.Width(_indentation * 20));
                         dl[i].Text = EditorGUILayout.TextField($"{dl[i].DataType}には入力できません");
                         GUI.enabled = true;
                     }
@@ -135,7 +155,8 @@ namespace editorExtension
                         {
                             _indentation--;
                         }
-                        GUILayout.Label(_line,_textStyle, GUILayout.Width(_indentation * 20));
+
+                        GUILayout.Label(_line, _textStyle, GUILayout.Width(_indentation * 20));
                         if (dl[i].DataType == TextDataType.Branch)
                         {
                             _indentation++;
@@ -144,12 +165,26 @@ namespace editorExtension
                         {
                             _indentation += 2;
                         }
-                        else
-                        {
-                            
-                        }
 
                         dl[i].Text = EditorGUILayout.TextField(dl[i].Text, GUILayout.ExpandWidth(true));
+                    }
+
+                    if (dl[i].DataType == TextDataType.Text)
+                    {
+                        dl[i].UseEvent = EditorGUILayout.Toggle(dl[i].UseEvent, GUILayout.Width(20));
+                        if (dl[i].UseEvent)
+                        {
+                            _eventProperty = _textDataProperty
+                                .GetArrayElementAtIndex(_selectNumber)
+                                .FindPropertyRelative("DataList")
+                                .GetArrayElementAtIndex(i)
+                                .FindPropertyRelative("Event");
+                            EditorGUILayout.PropertyField(_eventProperty);
+                        }
+                    }
+                    else
+                    {
+                        GUILayout.Space(20);
                     }
 
                     if (GUILayout.Button("×", GUILayout.Width(20), GUILayout.Height(20)))
@@ -170,7 +205,14 @@ namespace editorExtension
                 #endregion
 
                 #region 各種ボタン
-                _textColor = EditorGUILayout.ColorField(_textColor,GUILayout.Width(80));
+
+                if (GUILayout.Button("保存", GUILayout.Width(40), GUILayout.Height(20)))
+                {
+                    Undo.RecordObject(_textDataScriptable, "ScriptableObject保存");
+                    EditorUtility.SetDirty(_textDataScriptable);
+                }
+
+                _textColor = EditorGUILayout.ColorField(_textColor, GUILayout.Width(80));
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("会話パターンを追加", GUILayout.Width(120)))
                 {

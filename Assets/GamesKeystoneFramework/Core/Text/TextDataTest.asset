@@ -12,12 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7482ea5ce82031b45b19591b35ee03b7, type: 3}
   m_Name: TextDataTest
   m_EditorClassIdentifier: 
-  textDataList:
-  - textLabel: default
-    dataList:
-    - dataType: 0
-      text: 
-    - dataType: 0
-      text: 
-    - dataType: 0
-      text: 
+  TextDataList:
+  - TextLabel: 
+    DataList:
+    - DataType: 0
+      Text: 
+      Event:
+        m_PersistentCalls:
+          m_Calls: []
+    - DataType: 0
+      Text: 
+      Event:
+        m_PersistentCalls:
+          m_Calls: []
+    - DataType: 0
+      Text: 
+      Event:
+        m_PersistentCalls:
+          m_Calls: []

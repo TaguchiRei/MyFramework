@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace GamesKeystoneFramework.Core.Text
 {
     [CreateAssetMenu(fileName = "TextData", menuName = "Scriptable Objects/TextDataObject")]
     public class TextDataScriptable : ScriptableObject
     {
-        public List<TextDataList> TextDataList;
+        public List<TextDataList> TextDataList = new();
     }
 
     [Serializable]
@@ -23,6 +24,7 @@ namespace GamesKeystoneFramework.Core.Text
     {
         public TextDataType DataType;
         public string Text;
+        [FormerlySerializedAs("_useEvent")] public bool UseEvent;
         public UnityEvent Event;
     }
 }
