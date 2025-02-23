@@ -23,12 +23,14 @@ public class TextDataEditor : EditorWindow
     private const string LineColorPrefKey = "TextDataEditor_LineColor";
     
     
-    //scriptableObject関係
-    
-    
-    
     //保存用のSerializedProperty等
-    SerializedObject _textDataListObject;
+    SerializedObject _tDSSerializedObject;
+    SerializedProperty _textDataListProperty;
+    SerializedProperty _textDataProperty;
+    SerializedProperty _textProperty;
+    SerializedProperty _labelProperty;
+    
+    
     
 
     [MenuItem("Window/GamesKeystoneFramework/TextDataEditor")]
@@ -48,6 +50,7 @@ public class TextDataEditor : EditorWindow
         //エラー回避
         
         //編集用スクリプト
+        _textDataScriptable = (TextDataScriptable)EditorGUILayout.ObjectField("会話データをアタッチ",_textDataScriptable, typeof(TextDataScriptable), false);
     }
 
     private void LoadTextDataScriptable()
