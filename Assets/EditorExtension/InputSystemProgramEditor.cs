@@ -14,7 +14,7 @@ namespace GamesKeystoneFramework.Core.Input
         Vector2 scrollPosition = Vector2.zero;
         private bool useLegacy = false;
 
-        [MenuItem("Window/InputSystemProgramingEditor")]
+        [MenuItem("Window/GamesKeystoneFramework/InputSystemProgramingEditor")]
         public static void ShowWindow()
         {
             InputSystemProgramEditor window = GetWindow<InputSystemProgramEditor>("InputSystemProgramEditor");
