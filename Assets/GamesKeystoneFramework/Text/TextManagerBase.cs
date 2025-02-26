@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GamesKeystoneFramework.Core.Text;
@@ -13,18 +14,27 @@ namespace GamesKeystoneFramework.Text
         //使用者が設定に使用
         [SerializeField] private bool useBranch = true;
         [SerializeField] private bool displayCharOneByOne;
+        [SerializeField] private int line = 3;
+        [SerializeField] private float writeSpeed = 0.1f;
         [SerializeField] private string[] names;
 
 
         //必須
-        [SerializeField] TextMeshProUGUI mainText;
-        [SerializeField] TextMeshProUGUI selectionText;
-        [SerializeField] Image mainTextImage;
-        [SerializeField] Image selectionTextImage;
+        [SerializeField] private TextMeshProUGUI mainText;
+        [SerializeField] private TextMeshProUGUI selectionText;
+        [SerializeField] private Image mainTextImage;
+        [SerializeField] private Image selectionTextImage;
 
         //処理に使用する
-        List<TextData> _dataList;
-
+        private List<TextData> _dataList;
+        /// <summary>
+        /// 何行目かを保存
+        /// </summary>
+        private int _lineNumber = 0;
+        private int _questionIndentation = 0;
+        private int _readPoint = 0;
+        
+        
         private void Start()
         {
             TextBox();
@@ -38,14 +48,34 @@ namespace GamesKeystoneFramework.Text
         {
             action?.Invoke();
             TextBox(true);
-            _dataList = TextUpdate(textDataScriptable.TextDataList[selectionIndex].DataList);
+            _dataList = TextUpdate(textDataScriptable.TextDataList[selectionIndex].DataList); 
+            Next();
+        }
+
+        void Next()
+        {
+            switch (_dataList[_lineNumber].DataType)
+            {
+                case TextDataType.Text:
+                    break;
+                case TextDataType.Question:
+                    break;
+                case TextDataType.Branch:
+                    break;
+                case TextDataType.QEnd:
+                    break;
+                case TextDataType.TextEnd:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void TextWrite()
+        {
             
         }
-
-        public void NextText()
-        {
-        }
-
+        
         private List<TextData> TextUpdate(List<TextData> dataList)
         {
             const string pattern = @"/name(\d)";
