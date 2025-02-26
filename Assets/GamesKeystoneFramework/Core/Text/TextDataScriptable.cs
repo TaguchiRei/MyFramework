@@ -1,4 +1,3 @@
-using GamesKeystoneFramework.TextSystem;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -24,5 +23,14 @@ namespace GamesKeystoneFramework.Core.Text
         public string Text = "";
         public bool UseEvent  = false;
         public int MethodNumber = 0;
+    }
+    
+    public enum TextDataType
+    {
+        Text,
+        Question,
+        Branch,
+        QEnd,
+        TextEnd,
     }
 }

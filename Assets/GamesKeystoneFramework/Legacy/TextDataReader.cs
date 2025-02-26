@@ -21,13 +21,6 @@ namespace GamesKeystoneFramework.TextSystem
     {
         public List<TextData> wrpperData;
     }
-    public enum TextDataType
-    {
-        Text,
-        Question,
-        Branch,
-        QEnd,
-        TextEnd,
-    }
+
 
 }
