@@ -5,7 +5,7 @@ using System;
 using GamesKeystoneFramework.Core.Text;
 namespace GamesKeystoneFramework.TextSystem
 {
-    public class TextDataReader : MonoBehaviour
+    public class TextDataReaderL : MonoBehaviour
     {
         [HideInInspector]public List<TextData> textData = new();
         

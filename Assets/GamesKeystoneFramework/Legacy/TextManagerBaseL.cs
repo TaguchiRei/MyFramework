@@ -6,6 +6,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using GamesKeystoneFramework.Core.Text;
+using UnityEngine.Serialization;
+
 namespace GamesKeystoneFramework.TextSystem
 {
     public abstract class TextManagerBaseL : MonoBehaviour
@@ -13,7 +15,7 @@ namespace GamesKeystoneFramework.TextSystem
         [SerializeField] bool _useBranch = true;
         [SerializeField] int line = 2;
         [SerializeField] Color[] colors;
-        [SerializeField] TextDataReader reader;
+        [FormerlySerializedAs("reader")] [SerializeField] TextDataReaderL readerL;
         [SerializeField] TextMeshProUGUI textBoxTMP;
         [SerializeField] Image textBox;
         [SerializeField] TextMeshProUGUI selectTMP;
@@ -39,9 +41,9 @@ namespace GamesKeystoneFramework.TextSystem
         {
             if (read)
             {
-                reader.LoadTextData(fileName);
+                readerL.LoadTextData(fileName);
             }
-            textDataList = reader.textData;
+            textDataList = readerL.textData;
             TextBoxShow();
             textBoxTMP.text = "";
             readPoint = 0;
