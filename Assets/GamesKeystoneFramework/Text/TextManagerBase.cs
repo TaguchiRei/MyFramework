@@ -54,14 +54,15 @@ namespace GamesKeystoneFramework.Text
             _lineNumber = 0;
             action?.Invoke();
             TextBox(true);
-            _dataList = TextUpdate(textDataScriptable.TextDataList[selectionIndex].DataList); 
+            _dataList = TextUpdate(textDataScriptable.TextDataList[selectionIndex].DataList);
+            mainText.text = string.Empty;
             Next();
         }
 
         /// <summary>
         /// 文章表示中に決定ボタンを押したときの処理を一括で管理
         /// </summary>
-        void Next()
+        public void Next()
         {
             if (_movingCoroutin)
             {
@@ -69,6 +70,8 @@ namespace GamesKeystoneFramework.Text
                 StopCoroutine(_typeTextCoroutine);
                 _typeTextCoroutine = null;
                 mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
+                _lineNumber++;
+                _movingCoroutin = false;
             }
             else
             {
@@ -134,16 +137,16 @@ namespace GamesKeystoneFramework.Text
             //何行あるかを調べ、新規で行が追加されることを念頭に基底行数より多ければ一行目を削除して繰り上げする。
             var s = mainText.text.Split('\n').ToList();
             var sb = new StringBuilder();
-            if (s.Count + 1 > line)
+            if (s.Count > line)
             {
                 s.RemoveAt(0);
-                sb.Append(string.Join("\n", s));
             }
-            mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
-            sb.Append("\n");
+            sb.Append(string.Join("\n", s));
+
+            mainText.maxVisibleCharacters = sb.Length;
             sb.Append(text);
+            sb.Append("\n");
             mainText.text = sb.ToString();
-           
             if (displayCharOneByOne)
             {
                 //一文字づつ表示
@@ -159,9 +162,9 @@ namespace GamesKeystoneFramework.Text
                 mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
             }
             //完了後の処理
+            _movingCoroutin = false;
             _lineNumber++;
             action?.Invoke();
-            _movingCoroutin = false;
             _typeTextCoroutine = null;
         }
         

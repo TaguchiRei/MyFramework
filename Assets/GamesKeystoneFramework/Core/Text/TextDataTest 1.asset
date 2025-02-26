@@ -24,7 +24,15 @@ MonoBehaviour:
       UseEvent: 0
       MethodNumber: 0
     - DataType: 0
-      Text: 
+      Text: "\u4ECA\u73FE\u5728\u306FText\u304C\u6B63\u5E38\u306B\u52D5\u304F\u304B\u3092\u78BA\u304B\u3081\u3066\u3044\u307E\u3059\u3002"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 0
+      Text: "\u6B63\u5E38\u306B\u52D5\u3051\u3070\u3044\u3044\u306E\u3067\u3059\u304C\u3002"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 0
+      Text: "\u3053\u308C\u304C\u898B\u3089\u308C\u305F\u3089\u6210\u529F\u3068\u3044\u3046\u3053\u3068\u3067\u3059\u306D\u3002"
       UseEvent: 0
       MethodNumber: 0
   - TextLabel: testData
