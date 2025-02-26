@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using GamesKeystoneFramework.Core.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GamesKeystoneFramework.Text
@@ -66,14 +65,24 @@ namespace GamesKeystoneFramework.Text
         /// </summary>
         protected void Next()
         {
+            Debug.Log("next");
             if (_movingCoroutin)
             {
                 //一文字づつ表示を強制終了させてすべて表示
                 StopCoroutine(_typeTextCoroutine);
+                if (_dataList[_lineNumber].DataType == TextDataType.Text)
+                {
+                    _lineNumber++;
+                }
+                else if (_dataList[_lineNumber].DataType == TextDataType.Question)
+                {
+                    _lineNumber++;
+                    SelectorShow();
+                }
                 _typeTextCoroutine = null;
                 mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
-                _lineNumber++;
                 _movingCoroutin = false;
+                
             }
             else
             {
@@ -81,9 +90,11 @@ namespace GamesKeystoneFramework.Text
                 {
                     //セレクトモード中に決定が押されたときの処理
                     _selectMode = false;
-                    _lineNumber = _choices[selectNumber].Item2;
+                    _lineNumber = _choices[selectNumber].Item2 + 1;
+                    Next();
                     return;
                 }
+
                 //通常時の処理
                 BranchCheck();
             }
@@ -183,11 +194,13 @@ namespace GamesKeystoneFramework.Text
                     break;
                 }
             }
+            selectionText.text = string.Join("\n", _choices.Select(x => x.Item1));
+            _lineNumber++;
         }
 
         private void FindOutsideTheQuestion()
         {
-            while (_questionIndentation == 0)
+            while (_questionIndentation <= 0)
             {
                 if (_dataList[_lineNumber].DataType == TextDataType.QEnd)
                 {
@@ -195,6 +208,8 @@ namespace GamesKeystoneFramework.Text
                 }
                 _lineNumber++;
             }
+            _lineNumber++;
+            Debug.Log(_lineNumber);
             Next();
         }
 
