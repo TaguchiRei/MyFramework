@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using GamesKeystoneFramework.Core.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GamesKeystoneFramework.Text
@@ -29,17 +30,17 @@ namespace GamesKeystoneFramework.Text
         [SerializeField] private Image selectionTextImage;
 
         //処理に使用する
+        private readonly List<(string, int)> _choices = new();
         private List<TextData> _dataList;
-        private List<(string,int)> _choices = new();
-        private int _lineNumber = 0;
-        private int _questionIndentation = 0;
+        private int _lineNumber;
+        private int _questionIndentation;
         private bool _movingCoroutin;
-        private bool _selectMode = false;
+        private bool _selectMode;
         private Coroutine _typeTextCoroutine;
-        
-        public int SelectNumber;
-        
-        
+
+        public int selectNumber;
+
+
         private void Start()
         {
             TextBox();
@@ -49,7 +50,8 @@ namespace GamesKeystoneFramework.Text
             }
         }
 
-        public virtual void TextStart(TextDataScriptable textDataScriptable, int selectionIndex, Action action = null)
+        protected virtual void TextStart(TextDataScriptable textDataScriptable, int selectionIndex,
+            Action action = null)
         {
             _lineNumber = 0;
             action?.Invoke();
@@ -62,7 +64,7 @@ namespace GamesKeystoneFramework.Text
         /// <summary>
         /// 文章表示中に決定ボタンを押したときの処理を一括で管理
         /// </summary>
-        public void Next()
+        protected void Next()
         {
             if (_movingCoroutin)
             {
@@ -78,45 +80,39 @@ namespace GamesKeystoneFramework.Text
                 if (_selectMode)
                 {
                     //セレクトモード中に決定が押されたときの処理
+                    _selectMode = false;
+                    _lineNumber = _choices[selectNumber].Item2;
+                    return;
                 }
-                else
-                {
-                    //通常時の処理
-                    BranchCheck();
-                }
+                //通常時の処理
+                BranchCheck();
             }
         }
 
         /// <summary>
         /// DataTypeから次の処理を決める
         /// </summary>
-        void BranchCheck()
+        private void BranchCheck()
         {
             //次のテキストを読み込んで適切な処理をする
             switch (_dataList[_lineNumber].DataType)
             {
                 case TextDataType.Text:
-                     _typeTextCoroutine = StartCoroutine(TypeText(_dataList[_lineNumber].Text));
+                    _typeTextCoroutine = StartCoroutine(TypeText(_dataList[_lineNumber].Text));
                     break;
                 case TextDataType.Question:
-                    //selectModeをonにする
                     _selectMode = true;
-                    //何段目の質問化を記憶する
                     _questionIndentation++;
-                    //選択肢とメインテキストの初期化を行う
+                    //テキストボックス初期化
                     selectionText.text = "";
                     if (resetForQuestion)
                         mainText.text = "";
-                    SelectNumber = 0;
-                    _typeTextCoroutine = StartCoroutine(TypeText(_dataList[_lineNumber].Text,(() =>
-                    {
-                        SelectorShow();
-                    })));
+                    selectNumber = 0;
+                    _typeTextCoroutine = StartCoroutine(TypeText(_dataList[_lineNumber].Text, (SelectorShow)));
                     break;
                 case TextDataType.Branch:
-                            
-                    break;
                 case TextDataType.QEnd:
+                    FindOutsideTheQuestion();
                     break;
                 case TextDataType.TextEnd:
                     break;
@@ -131,7 +127,7 @@ namespace GamesKeystoneFramework.Text
         /// <param name="text">表示したいテキスト</param>
         /// <param name="action">テキスト表示後に実行される</param>
         /// <returns></returns>
-        IEnumerator TypeText(string text,Action action = null)
+        private IEnumerator TypeText(string text, Action action = null)
         {
             _movingCoroutin = true;
             //何行あるかを調べ、新規で行が追加されることを念頭に基底行数より多ければ一行目を削除して繰り上げする。
@@ -141,6 +137,7 @@ namespace GamesKeystoneFramework.Text
             {
                 s.RemoveAt(0);
             }
+
             sb.Append(string.Join("\n", s));
 
             mainText.maxVisibleCharacters = sb.Length;
@@ -161,17 +158,18 @@ namespace GamesKeystoneFramework.Text
                 //一気に表示
                 mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
             }
+
             //完了後の処理
             _movingCoroutin = false;
             _lineNumber++;
             action?.Invoke();
             _typeTextCoroutine = null;
         }
-        
+
         /// <summary>
         /// 選択肢を表示するのに使用
         /// </summary>
-        void SelectorShow()
+        private void SelectorShow()
         {
             SelectBox(true);
             for (int i = _lineNumber; i < _dataList.Count; i++)
@@ -186,7 +184,20 @@ namespace GamesKeystoneFramework.Text
                 }
             }
         }
-        
+
+        private void FindOutsideTheQuestion()
+        {
+            while (_questionIndentation == 0)
+            {
+                if (_dataList[_lineNumber].DataType == TextDataType.QEnd)
+                {
+                    _questionIndentation--;
+                }
+                _lineNumber++;
+            }
+            Next();
+        }
+
         /// <summary>
         /// テキストの中の名前を設定する
         /// </summary>
@@ -204,8 +215,10 @@ namespace GamesKeystoneFramework.Text
                     replacementText =
                         replacementText.Replace(matches[j].ToString(), names[int.Parse(matches[j].Value)]);
                 }
+
                 t.Text = replacementText;
             }
+
             return dataList;
         }
 
