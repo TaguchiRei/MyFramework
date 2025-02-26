@@ -33,7 +33,7 @@ namespace GamesKeystoneFramework.Text
         private List<TextData> _dataList;
         private int _lineNumber;
         private int _questionIndentation;
-        private bool _movingCoroutin;
+        private bool _movingCoroutine;
         private bool _selectMode;
         private Coroutine _typeTextCoroutine;
 
@@ -45,7 +45,7 @@ namespace GamesKeystoneFramework.Text
             TextBox();
             if (useBranch)
             {
-                SelectBox();
+                SelectionBox();
             }
         }
 
@@ -62,10 +62,19 @@ namespace GamesKeystoneFramework.Text
 
         /// <summary>
         /// 文章表示中に決定ボタンを押したときの処理を一括で管理
+        /// 戻り値がtrueならその後にテキストが続き、falseなら終了
         /// </summary>
-        protected void Next()
+        protected bool Next()
         {
-            if (_movingCoroutin)
+            if (_dataList == null || _dataList.Count <= _lineNumber)
+            {
+                TextBox();
+                if(useBranch)
+                    SelectionBox();
+                return false;
+            }
+
+            if (_movingCoroutine)
             {
                 //一文字づつ表示を強制終了させてすべて表示
                 StopCoroutine(_typeTextCoroutine);
@@ -80,8 +89,7 @@ namespace GamesKeystoneFramework.Text
                 }
                 _typeTextCoroutine = null;
                 mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
-                _movingCoroutin = false;
-                
+                _movingCoroutine = false;
             }
             else
             {
@@ -90,14 +98,18 @@ namespace GamesKeystoneFramework.Text
                     //セレクトモード中に決定が押されたときの処理
                     _selectMode = false;
                     _lineNumber = _choices[selectNumber].Item2 + 1;
-                    SelectBox();
+                    SelectionBox();
                     Next();
-                    return;
+                    if (_dataList.Count <= _lineNumber)
+                    {
+                        return false;
+                    }
+                    return true;
                 }
-
                 //通常時の処理
                 BranchCheck();
             }
+            return true;
         }
 
         /// <summary>
@@ -126,6 +138,7 @@ namespace GamesKeystoneFramework.Text
                     FindOutsideTheQuestion();
                     break;
                 case TextDataType.TextEnd:
+                    _lineNumber = _dataList.Count;
                     break;
                 default:
                     break;
@@ -140,7 +153,7 @@ namespace GamesKeystoneFramework.Text
         /// <returns></returns>
         private IEnumerator TypeText(string text, Action action = null)
         {
-            _movingCoroutin = true;
+            _movingCoroutine = true;
             //何行あるかを調べ、新規で行が追加されることを念頭に基底行数より多ければ一行目を削除して繰り上げする。
             var s = mainText.text.Split('\n').ToList();
             var sb = new StringBuilder();
@@ -171,7 +184,7 @@ namespace GamesKeystoneFramework.Text
             }
 
             //完了後の処理
-            _movingCoroutin = false;
+            _movingCoroutine = false;
             _lineNumber++;
             action?.Invoke();
             _typeTextCoroutine = null;
@@ -182,7 +195,7 @@ namespace GamesKeystoneFramework.Text
         /// </summary>
         private void SelectorShow()
         {
-            SelectBox(true);
+            SelectionBox(true);
             selectionText.text = string.Empty;
             _choices.Clear();
             for (int i = _lineNumber; i < _dataList.Count; i++)
@@ -252,7 +265,7 @@ namespace GamesKeystoneFramework.Text
         /// セレクトボックスを表示非表示する
         /// </summary>
         /// <param name="show"></param>
-        protected virtual void SelectBox(bool show = false)
+        protected virtual void SelectionBox(bool show = false)
         {
             selectionText.gameObject.SetActive(show);
             selectionTextImage.gameObject.SetActive(show);
