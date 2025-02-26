@@ -211,7 +211,6 @@ namespace GamesKeystoneFramework.Text
                 }
                 _lineNumber++;
             }
-            Debug.Log("find outside the question" + _lineNumber);
             Next();
         }
 
