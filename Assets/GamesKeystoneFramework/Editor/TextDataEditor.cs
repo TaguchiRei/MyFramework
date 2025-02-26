@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using System.Text;
 using GamesKeystoneFramework.Core.Text;
 using UnityEditor;
-using UnityEditor.Rendering;
 using UnityEngine;
 using ColorUtility = UnityEngine.ColorUtility;
 
-public class TextDataEditor : EditorWindow
+namespace GamesKeystoneFramework.Editor
+{
+    public class TextDataEditor : EditorWindow
 {
     //編集するスクリプタブルオブジェクト
     private TextDataScriptable _textDataScriptable;
@@ -25,13 +26,16 @@ public class TextDataEditor : EditorWindow
     private int _indentation;
     private Vector2 _scrollPosition;
     private Color _lineColor;
-    private Color _highlightsColor;
-    private GUIStyle _style;
+    private GUIStyle _normalTextStyle;
+    private GUIStyle _errorTextStyle;
 
     private string _lineDesign;
 
     //editor側で保存するためのキー
-    private const string LineColorPrefKey = "TextDataEditor_LineColor";
+    private const string LineColor1PrefKey = "TextDataEditor_LineColor";
+    private const string LineColor2PrefKey = "TextDataEditor_LineColor2";
+    private const string LineColor3PrefKey = "TextDataEditor_LineColor3";
+    private const string LineColor4PrefKey = "TextDataEditor_LineColor4";
     private const string TextMaxLengthPrefKey = "TextDataEditor_TextMaxLength";
     private const string SelectionMaxLengthPrefKey = "TextDataEditor_SelectionMaxLength";
 
@@ -55,7 +59,14 @@ public class TextDataEditor : EditorWindow
 
     private void OnEnable()
     {
-        _style = new(GUI.skin.label)
+        _lineColor = new Color(
+            EditorPrefs.GetFloat(LineColor1PrefKey),
+            EditorPrefs.GetFloat(LineColor2PrefKey),
+            EditorPrefs.GetFloat(LineColor3PrefKey),
+            EditorPrefs.GetFloat(LineColor4PrefKey));
+        _textMaxLength = EditorPrefs.GetInt(TextMaxLengthPrefKey);
+        _selectionMaxLength = EditorPrefs.GetInt(SelectionMaxLengthPrefKey);
+        _normalTextStyle = new(GUI.skin.label)
         {
             richText = true
         };
@@ -102,22 +113,43 @@ public class TextDataEditor : EditorWindow
                 return;
             }
         }
-
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
+        EditorGUI.BeginChangeCheck();
         _textMaxLength = EditorGUILayout.IntSlider("テキストの長さ", _textMaxLength, 1, 300);
+        if(EditorGUI.EndChangeCheck())
+            EditorPrefs.SetInt(TextMaxLengthPrefKey, _textMaxLength);
+        
+        EditorGUI.BeginChangeCheck();
         _selectionMaxLength = EditorGUILayout.IntSlider("選択肢の長さ", _selectionMaxLength, 1, 300);
+        if (EditorGUI.EndChangeCheck())
+            EditorPrefs.SetInt(SelectionMaxLengthPrefKey, _selectionMaxLength);
+        
         GUILayout.EndHorizontal();
-
+        
+        EditorGUI.BeginChangeCheck();
+        _lineColor = EditorGUILayout.ColorField(_lineColor,GUILayout.Width(180));
+        if (EditorGUI.EndChangeCheck())
+        {
+            EditorPrefs.SetFloat(LineColor1PrefKey,_lineColor.r);
+            EditorPrefs.SetFloat(LineColor2PrefKey,_lineColor.g);
+            EditorPrefs.SetFloat(LineColor3PrefKey,_lineColor.b);
+            EditorPrefs.SetFloat(LineColor4PrefKey,_lineColor.a);
+        }
+        
+        
         if (_textDataScriptableSerializedObject == null)
         {
             GUILayout.Label("データを読み込んでください");
             return;
         }
+        
 
         _textDataScriptableSerializedObject.Update();
         _indentation = 0;
+                
+        EditorGUILayout.PropertyField(_labelProperty,GUIContent.none);
 
         _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(position.height - 180));
         for (int i = 0; i < _dataTypePropertyList.Count; i++)
@@ -125,7 +157,6 @@ public class TextDataEditor : EditorWindow
             var dataType = (TextDataType)_dataTypePropertyList[i].intValue;
             var text = _textPropertyList[i].stringValue;
             var useEvent = _useEventPropertyList[i].boolValue;
-            var methodNum = _methodNumPropertyList[i].intValue;
 
             #region 文字数超過チェック
 
@@ -160,12 +191,18 @@ public class TextDataEditor : EditorWindow
                 }
             }
 
+            if (_indentation < 0)
+            {
+                _indentation = 0;
+                GUILayout.Label("インデントが異常です");
+            }
+
             #endregion
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(i.ToString(), GUILayout.Width(30));
             EditorGUILayout.PropertyField(_dataTypePropertyList[i], GUIContent.none, GUILayout.Width(80));
-            GUILayout.Label(_lineDesign, _style, GUILayout.Width(_indentation * 20));
+            GUILayout.Label(_lineDesign, _normalTextStyle, GUILayout.Width(_indentation * 20));
             if (dataType == TextDataType.QEnd || dataType == TextDataType.TextEnd)
             {
                 GUI.enabled = false;
@@ -230,11 +267,10 @@ public class TextDataEditor : EditorWindow
     void SelecterReset()
     {
         _selectionList = new List<string>();
-        for (int i = 0; i < _textDataScriptable.TextDataList.Count; i++)
+        foreach (var t in _textDataScriptable.TextDataList)
         {
-            _selectionList.Add(_textDataScriptable.TextDataList[i].TextLabel);
+            _selectionList.Add(t.TextLabel);
         }
-
         _selectionArray = _selectionList.ToArray();
     }
 
@@ -273,4 +309,5 @@ public class TextDataEditor : EditorWindow
             _methodNumPropertyList.Add(textData.FindPropertyRelative("MethodNumber"));
         }
     }
+}
 }
