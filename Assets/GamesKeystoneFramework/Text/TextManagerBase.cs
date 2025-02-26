@@ -65,7 +65,6 @@ namespace GamesKeystoneFramework.Text
         /// </summary>
         protected void Next()
         {
-            Debug.Log("next");
             if (_movingCoroutin)
             {
                 //一文字づつ表示を強制終了させてすべて表示
@@ -91,6 +90,7 @@ namespace GamesKeystoneFramework.Text
                     //セレクトモード中に決定が押されたときの処理
                     _selectMode = false;
                     _lineNumber = _choices[selectNumber].Item2 + 1;
+                    SelectBox();
                     Next();
                     return;
                 }
@@ -115,9 +115,9 @@ namespace GamesKeystoneFramework.Text
                     _selectMode = true;
                     _questionIndentation++;
                     //テキストボックス初期化
-                    selectionText.text = "";
+                    selectionText.text = string.Empty;
                     if (resetForQuestion)
-                        mainText.text = "";
+                        mainText.text = string.Empty;
                     selectNumber = 0;
                     _typeTextCoroutine = StartCoroutine(TypeText(_dataList[_lineNumber].Text, (SelectorShow)));
                     break;
@@ -183,13 +183,15 @@ namespace GamesKeystoneFramework.Text
         private void SelectorShow()
         {
             SelectBox(true);
+            selectionText.text = string.Empty;
+            _choices.Clear();
             for (int i = _lineNumber; i < _dataList.Count; i++)
             {
                 if (_dataList[i].DataType == TextDataType.Branch)
                 {
                     _choices.Add((_dataList[i].Text, i));
                 }
-                else if (_dataList[i].DataType == TextDataType.QEnd)
+                else if (_dataList[i].DataType == TextDataType.QEnd || _dataList[i].DataType == TextDataType.Question)
                 {
                     break;
                 }
@@ -200,7 +202,8 @@ namespace GamesKeystoneFramework.Text
 
         private void FindOutsideTheQuestion()
         {
-            while (_questionIndentation <= 0)
+            Debug.Log(_questionIndentation);
+            while (_questionIndentation > 0)
             {
                 if (_dataList[_lineNumber].DataType == TextDataType.QEnd)
                 {
@@ -208,8 +211,7 @@ namespace GamesKeystoneFramework.Text
                 }
                 _lineNumber++;
             }
-            _lineNumber++;
-            Debug.Log(_lineNumber);
+            Debug.Log("find outside the question" + _lineNumber);
             Next();
         }
 

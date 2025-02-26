@@ -43,6 +43,30 @@ MonoBehaviour:
       Text: "\u9078\u629E\u80A2\u306F\u8868\u793A\u3055\u308C\u307E\u3057\u305F\u304B\uFF1F"
       UseEvent: 0
       MethodNumber: 0
+    - DataType: 1
+      Text: "2\u6BB5\u76EE\u306E\u30C6\u30B9\u30C8\u3067\u3059"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 2
+      Text: "\u9078\u629E\u80A2\uFF11"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 0
+      Text: "\u9078\u629E\u80A2\uFF11\u3092\u9078\u629E"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 2
+      Text: "\u9078\u629E\u80A2\uFF12"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 0
+      Text: "\u9078\u629E\u80A2\uFF12\u3092\u9078\u629E"
+      UseEvent: 0
+      MethodNumber: 0
+    - DataType: 3
+      Text: 
+      UseEvent: 0
+      MethodNumber: 0
     - DataType: 3
       Text: 
       UseEvent: 0
