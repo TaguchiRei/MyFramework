@@ -23,6 +23,10 @@ MonoBehaviour:
       Text: "\u6A5F\u80FD\u8FFD\u52A0\u3068\u6271\u3044\u3084\u3059\u3055\u306E\u5411\u4E0A\u304C\u76EE\u7684\u3067\u3059\u3002"
       UseEvent: 0
       MethodNumber: 0
+    - DataType: 0
+      Text: 
+      UseEvent: 0
+      MethodNumber: 0
   - TextLabel: testData
     DataList:
     - DataType: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using GamesKeystoneFramework.Core.Text;
@@ -27,7 +28,6 @@ namespace GamesKeystoneFramework.Editor
     private Vector2 _scrollPosition;
     private Color _lineColor;
     private GUIStyle _normalTextStyle;
-    private GUIStyle _errorTextStyle;
 
     private string _lineDesign;
 
@@ -59,17 +59,22 @@ namespace GamesKeystoneFramework.Editor
 
     private void OnEnable()
     {
-        _lineColor = new Color(
-            EditorPrefs.GetFloat(LineColor1PrefKey),
-            EditorPrefs.GetFloat(LineColor2PrefKey),
-            EditorPrefs.GetFloat(LineColor3PrefKey),
-            EditorPrefs.GetFloat(LineColor4PrefKey));
-        _textMaxLength = EditorPrefs.GetInt(TextMaxLengthPrefKey);
-        _selectionMaxLength = EditorPrefs.GetInt(SelectionMaxLengthPrefKey);
-        _normalTextStyle = new(GUI.skin.label)
+        try
         {
-            richText = true
-        };
+            _lineColor = new Color(
+                EditorPrefs.GetFloat(LineColor1PrefKey),
+                EditorPrefs.GetFloat(LineColor2PrefKey),
+                EditorPrefs.GetFloat(LineColor3PrefKey),
+                EditorPrefs.GetFloat(LineColor4PrefKey));
+            _textMaxLength = EditorPrefs.GetInt(TextMaxLengthPrefKey);
+            _selectionMaxLength = EditorPrefs.GetInt(SelectionMaxLengthPrefKey);
+        }
+        catch (Exception e)
+        {
+            _lineColor = Color.yellow;
+            _textMaxLength = 25;
+            _selectionMaxLength = 8;
+        }
 
         var st = new StringBuilder();
         for (int i = 0; i < 5; i++)
@@ -83,6 +88,10 @@ namespace GamesKeystoneFramework.Editor
 
     private void OnGUI()
     {
+        _normalTextStyle ??= new(GUI.skin.label)
+        {
+            richText = true
+        };
 
         EditorGUI.BeginChangeCheck();
         _textDataScriptable = (TextDataScriptable)EditorGUILayout.ObjectField("会話データをアタッチ", _textDataScriptable,
@@ -132,6 +141,12 @@ namespace GamesKeystoneFramework.Editor
         _lineColor = EditorGUILayout.ColorField(_lineColor,GUILayout.Width(180));
         if (EditorGUI.EndChangeCheck())
         {
+            var st = new StringBuilder();
+            for (int i = 0; i < 5; i++)
+            {
+                st.Append($"<color=#{ColorUtility.ToHtmlStringRGBA(_lineColor)}>｜</color>｜｜");
+            }
+            _lineDesign = st.ToString();
             EditorPrefs.SetFloat(LineColor1PrefKey,_lineColor.r);
             EditorPrefs.SetFloat(LineColor2PrefKey,_lineColor.g);
             EditorPrefs.SetFloat(LineColor3PrefKey,_lineColor.b);
@@ -194,7 +209,7 @@ namespace GamesKeystoneFramework.Editor
             if (_indentation < 0)
             {
                 _indentation = 0;
-                GUILayout.Label("インデントが異常です");
+                GUILayout.Label($"          <color=red>インデントが異常です</color><color=white>{i}行目でQEndが多すぎるかBranchがQuestionがないまま使用されています</color>", _normalTextStyle);
             }
 
             #endregion
