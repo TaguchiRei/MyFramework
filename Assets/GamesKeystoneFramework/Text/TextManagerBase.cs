@@ -78,6 +78,7 @@ namespace GamesKeystoneFramework.Text
             {
                 //一文字づつ表示を強制終了させてすべて表示
                 StopCoroutine(_typeTextCoroutine);
+                _typeTextCoroutine = null;
                 if (_dataList[_lineNumber].DataType == TextDataType.Text)
                 {
                     _lineNumber++;
@@ -87,7 +88,6 @@ namespace GamesKeystoneFramework.Text
                     _lineNumber++;
                     SelectorShow();
                 }
-                _typeTextCoroutine = null;
                 mainText.maxVisibleCharacters = mainText.GetParsedText().Length;
                 _movingCoroutine = false;
             }
