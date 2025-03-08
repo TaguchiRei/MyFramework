@@ -34,7 +34,7 @@ namespace GamesKeystoneFramework.Save
                 Debug.Log("File Exists");
 #endif
                 var json = await File.ReadAllTextAsync(path);
-                return JsonUtility.FromJson<T>(json);
+                return Initialize();
             }
 #if UNITY_EDITOR
             Debug.Log("File Not Exists");
@@ -46,7 +46,7 @@ namespace GamesKeystoneFramework.Save
         /// </summary>
         /// <param name="dataNumber">データの番号</param>
         /// <param name="fileName"></param>
-        public void ResetData(int dataNumber, string fileName = "SaveData")
+        public async UniTask ResetData(int dataNumber, string fileName = "SaveData")
         {
             string path = Application.persistentDataPath + $"/{fileName + dataNumber}.json";
             if (File.Exists(path))
@@ -61,7 +61,13 @@ namespace GamesKeystoneFramework.Save
                 Debug.Log("File Not Exists");
 #endif
             }
-            File.WriteAllText(path, JsonUtility.ToJson(default));
+            await File.WriteAllTextAsync(path, JsonUtility.ToJson(Initialize()));
         }
+
+        /// <summary>
+        /// 初期状態のセーブデータを戻り値に設定してください。
+        /// </summary>
+        /// <returns></returns>
+        protected abstract T Initialize();
     }
 }

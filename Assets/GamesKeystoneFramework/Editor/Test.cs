@@ -1,58 +1,30 @@
-using GamesKeystoneFramework.Save;
+using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using GamesKeystoneFramework.Save;
 
-public class TestSaveLoad : MonoBehaviour
+public class SaveDataTest : MonoBehaviour
 {
-    // SaveDataBase<T> を継承したテスト用のデータクラス
-    [System.Serializable]
-    public class TestData : SaveDataBase<TestData>
+    UniTask _saveDataTask;
+
+    private void Start()
     {
-        public int score;
-        public string playerName;
+        
     }
+}
 
-    // テスト用のデータインスタンス
-    public TestData data;
+[Serializable]
+public class PlayerSaveData : SaveDataBase<PlayerSaveData>
+{
+    public int PlayerLevel = 1;
+    public string PlayerName = "Player";
 
-    void Start()
+    protected override PlayerSaveData Initialize()
     {
-        // データが未生成なら新規作成
-        if (data == null)
+        return new PlayerSaveData
         {
-            data = new TestData();
-        }
-
-        // テスト用のデータを設定
-        data.score = 100;
-        data.playerName = "TestPlayer";
-
-        // セーブ番号 1、ファイル名 "TestData" としてデータをセーブする
-        data.Save(1, "TestData");
-#if UNITY_EDITOR
-        Debug.Log("【TestSaveLoad】データをセーブしました");
-#endif
-
-        // ロード処理
-        TestData loadedData = data.Load(1, "TestData");
-        if (loadedData != null)
-        {
-#if UNITY_EDITOR
-            Debug.Log("【TestSaveLoad】ロード成功: score = " + loadedData.score + ", playerName = " + loadedData.playerName);
-#endif
-        }
-        else
-        {
-#if UNITY_EDITOR
-            Debug.Log("【TestSaveLoad】ロード失敗");
-#endif
-        }
-    }
-    public void AA()
-    {
-
-    }
-    public void BB()
-    {
-
+            PlayerLevel = 1,
+            PlayerName = "New Player"
+        };
     }
 }
