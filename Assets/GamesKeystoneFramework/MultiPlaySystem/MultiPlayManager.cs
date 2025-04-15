@@ -9,8 +9,6 @@ public class MultiPlayManager : MonoBehaviour
 {
     [Header("初期化完了しているかどうか")]
     public bool canMultiPlay;
-
-    private CreateLobbyOptions createLobbyOptions;
     
     /// <summary>
     /// ロビーのリスト
