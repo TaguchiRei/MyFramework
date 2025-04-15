@@ -27,7 +27,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// </summary>
         private async UniTask<bool> CreateLobby()
         {
-            
             try
             {
                 //Relayの割り当て
