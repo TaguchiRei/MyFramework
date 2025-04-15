@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -16,25 +17,33 @@ public class MultiPlayManager : MonoBehaviour
     /// </summary>
     private QueryLobbiesOptions queryLobbiesOptions;
     
-    protected virtual void Awake()
-    {
-        _ = ServicesInitialize();
-    }
-
+    
     /// <summary>
     /// ホストする際にサービスを初期化する。
-    /// 一度だけ使用
+    /// 一度だけ使用する
+    /// 通信エラー発生時はfalseを返す
     /// </summary>
-    private async UniTask ServicesInitialize()
+    private async UniTask<bool> ServicesInitialize()
     {
         //ゲーム側のサービス初期化
-        await UnityServices.InitializeAsync();
-        if (!AuthenticationService.Instance.IsSignedIn)
+        try
         {
-            //アカウントが無かった場合新たに作成
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            await UnityServices.InitializeAsync();
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                //アカウントが無かった場合新たに作成
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
         }
+        catch(Exception e)
+        {
+            Debug.LogError($"Services Initialize Error{e.Message}");
+            canMultiPlay = false;
+            return false;
+        }
+        
         Debug.Log("Services initialized");
         canMultiPlay = true;
+        return true;
     }
 }

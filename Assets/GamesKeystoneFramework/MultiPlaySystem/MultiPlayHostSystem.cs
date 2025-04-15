@@ -28,7 +28,7 @@ public class MultiPlayHostSystem : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError(e);
+            Debug.LogError($"Create Lobby Error{e}");
             return false;
         }
     }
