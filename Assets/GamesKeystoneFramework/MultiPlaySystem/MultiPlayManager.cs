@@ -15,6 +15,24 @@ public class MultiPlayManager : MonoBehaviour
     /// </summary>
     private QueryLobbiesOptions queryLobbiesOptions;
     
+    [HideInInspector] public MultiPlayManager Instance;
+    
+    /// <summary>
+    /// シーン開始時に必ずこのメソッドを動かすこと
+    /// </summary>
+    private void SingletonInitialize()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
+    
     
     /// <summary>
     /// ホストする際にサービスを初期化する。

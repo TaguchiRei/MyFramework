@@ -21,24 +21,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public string joinCode { get; private set; }
 
         private CreateLobbyOptions createLobbyOptions;
-        
-        [HideInInspector] public static MultiPlayHostSystem Instance;
-        
-        /// <summary>
-        /// シーン開始時に必ずこのメソッドを動かすこと
-        /// </summary>
-        private void SingletonInitialize()
-        {
-            if (Instance != null)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-        }
 
         /// <summary>
         /// ロビーを作成する際に使用するメソッド。
