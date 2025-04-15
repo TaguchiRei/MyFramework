@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using GamesKeystoneFramework.Core.Text;
 using UnityEngine.Serialization;
 
-namespace GamesKeystoneFramework.TextSystem
+namespace GamesKeystoneFramework.Text
 {
     public abstract class TextManagerBaseL : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using GamesKeystoneFramework.Core.Text;
-namespace GamesKeystoneFramework.TextSystem
+namespace GamesKeystoneFramework.Text
 {
     public class TextDataReaderL : MonoBehaviour
     {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using GamesKeystoneFramework.Core.Text;
 using UnityEditor;
 using UnityEngine;
 using ColorUtility = UnityEngine.ColorUtility;

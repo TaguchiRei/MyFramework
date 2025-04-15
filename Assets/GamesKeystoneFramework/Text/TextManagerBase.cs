@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using GamesKeystoneFramework.Core.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
