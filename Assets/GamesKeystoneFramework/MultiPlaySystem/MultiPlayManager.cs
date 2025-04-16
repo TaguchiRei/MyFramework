@@ -22,7 +22,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// <summary>
         /// シーン開始時に必ずこのメソッドを動かすこと
         /// </summary>
-        private void SingletonInitialize()
+        public void SingletonInitialize()
         {
             if (Instance != null)
             {
@@ -41,7 +41,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// 一度だけ使用する
         /// 通信エラー発生時はfalseを返す
         /// </summary>
-        private async UniTask<bool> ServicesInitialize()
+        public async UniTask<bool> ServicesInitialize()
         {
             //ゲーム側のサービス初期化
             try

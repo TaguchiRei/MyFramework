@@ -18,23 +18,25 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// <summary>
         /// 作成したロビーのjoinCode
         /// </summary>
-        public string JoinCode { get; private set; }
+        public string RelayJoinCode { get; private set; }
 
-        private CreateLobbyOptions createLobbyOptions;
+        private CreateLobbyOptions createLobbyOptions = new();
 
         /// <summary>
         /// ロビーを作成する際に使用するメソッド。
         /// </summary>
-        private async UniTask<bool> CreateLobby()
+        public async UniTask<bool> CreateLobby()
         {
             try
             {
                 //Relayの割り当て
                 var allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
 
-                //joinCode取得
-                JoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                //RelayjoinCode取得
+                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
+                if (lobbyData.Data == null)
+                    lobbyData.Data = new();
                 //Lobbyの作成
                 createLobbyOptions = new CreateLobbyOptions
                 {
@@ -45,7 +47,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 //joinCode追加
                 if (!lobbyData.IsPrivate)
                 {
-                    createLobbyOptions.Data.Add("JoinCode", new DataObject(lobbyData.VisibilityOptions, JoinCode));
+                    Debug.Log($"Add JoinCode : {RelayJoinCode}");
+                    createLobbyOptions.Data.Add("RelayJoinCode", new DataObject(lobbyData.VisibilityOptions, RelayJoinCode));
                 }
                 
                 //ロビー作成
