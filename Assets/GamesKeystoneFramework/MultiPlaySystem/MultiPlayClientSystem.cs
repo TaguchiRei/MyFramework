@@ -9,13 +9,13 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 {
     public class MultiPlayClientSystem : MonoBehaviour
     {
-        private List<Lobby> _lobbies;
+        public List<Lobby> _lobbies = new();
     
         /// <summary>
         /// ロビーリストの取得に使う。
         /// </summary>
         /// <returns></returns>
-        private async UniTask<bool> GetLobbyList()
+        public async UniTask<bool> GetLobbyList()
         {
             try
             {
@@ -26,7 +26,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     Debug.Log("Lobby Not Found");
                     return false;
                 }
-                return false;
+                return true;
             }
             catch (Exception e)
             {
@@ -37,13 +37,13 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// <summary>
         /// ロビーコードを利用したロビー参加に使う
         /// </summary>
-        /// <param name="lobbyCode"></param>
+        /// <param name="lobbyId"></param>
         /// <returns></returns>
-        private async UniTask<bool> JoinLobby(string lobbyCode)
+        public async UniTask<bool> JoinLobby(string lobbyId)
         {
             try
             {
-                await LobbyService.Instance.JoinLobbyByCodeAsync("LobbyCode");
+                await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
                 return true;
             }
             catch(Exception e)
