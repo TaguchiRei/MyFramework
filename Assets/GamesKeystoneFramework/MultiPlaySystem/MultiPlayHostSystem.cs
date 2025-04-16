@@ -29,14 +29,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         {
             try
             {
-                //Relayの割り当て
-                var allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
+                lobbyData.Data ??= new();
 
-                //RelayjoinCode取得
-                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-
-                if (lobbyData.Data == null)
-                    lobbyData.Data = new();
                 //Lobbyの作成
                 createLobbyOptions = new CreateLobbyOptions
                 {
@@ -44,32 +38,60 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     IsLocked = lobbyData.IsLocked,
                     Data = lobbyData.Data,
                 };
-                //joinCode追加
+
+                //ロビー作成
+                await LobbyService.Instance.CreateLobbyAsync
+                    (lobbyData.LobbyName, lobbyData.MaxPlayers, createLobbyOptions);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Create Lobby Error :{e}");
+                return false;
+            }
+        }
+
+        private async UniTask<bool> RelaySetting()
+        {
+            try
+            {
+                //Relayの割り当て
+                var allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
+                //RelayJoinCode取得と追加
+                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
                 if (!lobbyData.IsPrivate)
                 {
                     Debug.Log($"Add JoinCode : {RelayJoinCode}");
-                    createLobbyOptions.Data.Add("RelayJoinCode", new DataObject(lobbyData.VisibilityOptions, RelayJoinCode));
+                    createLobbyOptions.Data.Add("RelayJoinCode",
+                        new DataObject(lobbyData.VisibilityOptions, RelayJoinCode));
                 }
-                
-                //ロビー作成
-                await LobbyService.Instance.CreateLobbyAsync
-                (lobbyData.LobbyName, lobbyData.MaxPlayers, createLobbyOptions);
-                
                 //Relayの接続設定
                 var relayServerData = allocation.ToRelayServerData("dtls");
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
-                
-                //ホストとして接続
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Relay Setting Error :{e.Message}");
+                return false;
+            }
+        }
+
+        private bool ConnectionHost()
+        {
+            //ホストとして接続
+            try
+            {
                 NetworkManager.Singleton.StartHost();
                 return true;
             }
             catch (Exception e)
             {
-                Debug.LogError($"Create Lobby Error{e}");
+                Debug.LogError($"Connection Host Error :{e.Message}");
                 return false;
             }
         }
-        
 
         /// <summary>
         /// ロビー作成時に設定する項目をまとめた構造体
