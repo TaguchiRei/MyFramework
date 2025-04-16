@@ -17,7 +17,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// </summary>
         public static QueryLobbiesOptions QueryLobbiesOptions;
     
-        [HideInInspector] public MultiPlayManager Instance;
+         public static MultiPlayManager Instance;
     
         /// <summary>
         /// シーン開始時に必ずこのメソッドを動かすこと

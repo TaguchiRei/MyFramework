@@ -75,7 +75,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             catch (Exception e)
             {
                 Debug.LogError($"Join Relay Error{e.Message}");
-                throw;
+                return false;
             }
         }
     }
