@@ -6,7 +6,6 @@ using Unity.Netcode.Transports.UTP;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
-using Unity.Services.Relay.Models;
 using UnityEngine;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
