@@ -13,12 +13,12 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 {
     public class MultiPlayHostSystem : MonoBehaviour
     {
-        [Header("マルチプレイ参加可能人数"), SerializeField]
-        private int _numberObParticipants;
-
         [SerializeField] LobbyData lobbyData;
 
-        public string joinCode { get; private set; }
+        /// <summary>
+        /// 作成したロビーのjoinCode
+        /// </summary>
+        public string JoinCode { get; private set; }
 
         private CreateLobbyOptions createLobbyOptions;
 
@@ -30,10 +30,10 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             try
             {
                 //Relayの割り当て
-                var allocation = await RelayService.Instance.CreateAllocationAsync(_numberObParticipants);
+                var allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
 
                 //joinCode取得
-                joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                JoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
                 //Lobbyの作成
                 createLobbyOptions = new CreateLobbyOptions
@@ -45,12 +45,12 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 //joinCode追加
                 if (!lobbyData.IsPrivate)
                 {
-                    createLobbyOptions.Data.Add("JoinCode", new DataObject(lobbyData.VisibilityOptions, joinCode));
+                    createLobbyOptions.Data.Add("JoinCode", new DataObject(lobbyData.VisibilityOptions, JoinCode));
                 }
                 
                 //ロビー作成
                 await LobbyService.Instance.CreateLobbyAsync
-                (lobbyData.LobbyName, _numberObParticipants, createLobbyOptions);
+                (lobbyData.LobbyName, lobbyData.MaxPlayers, createLobbyOptions);
                 
                 //Relayの接続設定
                 var relayServerData = allocation.ToRelayServerData("dtls");
@@ -72,10 +72,10 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// ロビー作成時に設定する項目をまとめた構造体
         /// </summary>
         [Serializable]
-        struct LobbyData
+        public struct LobbyData
         {
             public string LobbyName;
-            public string MaxPlayers;
+            public int MaxPlayers;
             public bool IsPrivate;
             public bool IsLocked;
             public DataObject.VisibilityOptions VisibilityOptions;

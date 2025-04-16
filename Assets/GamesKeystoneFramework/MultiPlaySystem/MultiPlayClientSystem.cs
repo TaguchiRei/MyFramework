@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public class MUltiPlayClientSystem : MonoBehaviour
+    public class MultiPlayClientSystem : MonoBehaviour
     {
         private List<Lobby> _lobbies;
     
