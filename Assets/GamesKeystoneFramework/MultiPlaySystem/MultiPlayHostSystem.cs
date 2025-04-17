@@ -22,6 +22,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 
         private CreateLobbyOptions createLobbyOptions = new();
 
+        private Allocation _allocation;
+
         /// <summary>
         /// ロビーを作成する際に使用するメソッド。
         /// </summary>
@@ -29,6 +31,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         {
             try
             {
+                //Relayの割り当て
+                _allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
                 lobbyData.Data ??= new();
 
                 //Lobbyの作成
@@ -38,6 +42,15 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     IsLocked = lobbyData.IsLocked,
                     Data = lobbyData.Data,
                 };
+                
+                //RelayJoinCode取得と追加
+                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(_allocation.AllocationId);
+                if (!lobbyData.IsPrivate)
+                {
+                    Debug.Log($"Add JoinCode : {RelayJoinCode}");
+                    createLobbyOptions.Data.Add("RelayJoinCode",
+                        new DataObject(lobbyData.VisibilityOptions, RelayJoinCode));
+                }
 
                 //ロビー作成
                 await LobbyService.Instance.CreateLobbyAsync
@@ -52,23 +65,17 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
         }
 
-        private async UniTask<bool> RelaySetting()
+        public async UniTask<bool> RelaySetting()
         {
+            Debug.Log(createLobbyOptions.Data.Count + "--------------------------------");
+            
             try
             {
-                //Relayの割り当て
-                var allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
-                //RelayJoinCode取得と追加
-                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-                if (!lobbyData.IsPrivate)
-                {
-                    Debug.Log($"Add JoinCode : {RelayJoinCode}");
-                    createLobbyOptions.Data.Add("RelayJoinCode",
-                        new DataObject(lobbyData.VisibilityOptions, RelayJoinCode));
-                }
+                
                 //Relayの接続設定
-                var relayServerData = allocation.ToRelayServerData("dtls");
+                var relayServerData = _allocation.ToRelayServerData("dtls");
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+                Debug.Log(createLobbyOptions.Data.Count + "--------------------------------");
                 return true;
             }
             catch (Exception e)
@@ -78,13 +85,13 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
         }
 
-        private bool ConnectionHost()
+        public bool ConnectionHost()
         {
             //ホストとして接続
             try
             {
                 NetworkManager.Singleton.StartHost();
-                MultiPlayManager.Instance.IsHost = true;
+                Debug.Log($"IsServer{NetworkManager.Singleton.IsServer}");
                 return true;
             }
             catch (Exception e)

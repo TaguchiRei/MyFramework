@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -13,11 +14,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         [SerializeField] private GameObject MultiPlayObjectGroup;
         [Header("初期化完了しているかどうか")]
         public static bool CanMultiPlay;
-
-        /// <summary>
-        /// ホストかどうかを保存
-        /// </summary>
-        [HideInInspector] public bool IsHost;
     
         /// <summary>
         /// ロビーのリスト
@@ -25,10 +21,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public static QueryLobbiesOptions QueryLobbiesOptions;
     
          public static MultiPlayManager Instance;
-
-         private UniTask<bool> _initializeTask;
          
-         public List<MultiPlayObject> MultiPlayObjects = new List<MultiPlayObject>();
+        
 
          /// <summary>
         /// シーン開始時に必ずこのメソッドを動かすこと
@@ -44,8 +38,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
             }
-            
-            _initializeTask = ServicesInitialize();
         }
     
     
@@ -80,7 +72,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 
         public void MultiObjectInstantiate()
         {
-            
+            var networkObjects = MultiPlayObjectGroup.GetComponentsInChildren<NetworkObject>();
+            Debug.Log($"networkObjects: {networkObjects.Length}");
         }
     }
 }

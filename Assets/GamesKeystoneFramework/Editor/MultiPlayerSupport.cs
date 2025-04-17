@@ -22,6 +22,8 @@ namespace GamesKeystoneFramework.Editor
         private SerializedObject _settingSerializedObject;
         private SerializedProperty _settingProperty;
         
+        Vector2 _scrollPosition;
+        
         [MenuItem("Window/GamesKeystoneFramework/MultiplayerSupport")]
         public static void ShowWindow()
         {
@@ -32,6 +34,7 @@ namespace GamesKeystoneFramework.Editor
         {
             _multiPlayerObjectGroup = GameObject.Find("MultiPlayerObjectGroup");
             _setUp = _multiPlayerObjectGroup != null;
+            _settingObject = new List<GameObject> { null };
         }
 
         private void OnGUI()
@@ -70,24 +73,26 @@ namespace GamesKeystoneFramework.Editor
             }
             else
             {
-                GUILayout.Label("Setup Object");
-
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Add", GUILayout.Width(100)))
+                GUILayout.Label("Setup Object", EditorStyles.boldLabel,GUILayout.Width(100));
+                if (GUILayout.Button("Add", GUILayout.Width(60)))
                 {
                     _settingObject.Add(null);
                 }
 
-                if (GUILayout.Button("Remove",GUILayout.Width(100)))
+                if (GUILayout.Button("Remove",GUILayout.Width(60)) && _settingObject.Count != 1)
                 {
                     _settingObject.RemoveAt(_settingObject.Count - 1);
                 }
                 EditorGUILayout.EndHorizontal();
+                
+                _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition,GUILayout.Height(Mathf.Min(position.height - 180,(_settingObject.Count + 1) * 20)));
                 for (int i = 0; i < _settingObject.Count; i++)
                 {
                     _settingObject[i] =
                         (GameObject)EditorGUILayout.ObjectField(_settingObject[i], typeof(GameObject), true);
                 }
+                EditorGUILayout.EndScrollView();
 
                 EditorGUILayout.ToggleLeft("Use RigidBody", _useRigidBody);
                 if (GUILayout.Button("Setting"))
@@ -106,7 +111,8 @@ namespace GamesKeystoneFramework.Editor
                         }
                     }
                     
-                    _settingObject = null;
+                    _settingObject.Clear();
+                    _settingObject.Add(null);
                 }
             }
         }
