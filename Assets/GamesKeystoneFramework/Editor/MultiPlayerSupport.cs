@@ -18,7 +18,7 @@ namespace GamesKeystoneFramework.Editor
 
         private GameObject _multiPlayerObjectGroup;
         
-        private GameObject[] _settingObject;
+        private List<GameObject> _settingObject;
         private SerializedObject _settingSerializedObject;
         private SerializedProperty _settingProperty;
         
@@ -32,10 +32,6 @@ namespace GamesKeystoneFramework.Editor
         {
             _multiPlayerObjectGroup = GameObject.Find("MultiPlayerObjectGroup");
             _setUp = _multiPlayerObjectGroup != null;
-            _settingObject = new GameObject[10];
-            
-            //リストのSerializedObject化
-            //_settingSerializedObject = new SerializedObject();
         }
 
         private void OnGUI()
@@ -75,9 +71,19 @@ namespace GamesKeystoneFramework.Editor
             else
             {
                 GUILayout.Label("Setup Object");
-                
-                
-                for (int i = 0; i < _settingObject.Length; i++)
+
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("Add", GUILayout.Width(100)))
+                {
+                    _settingObject.Add(null);
+                }
+
+                if (GUILayout.Button("Remove",GUILayout.Width(100)))
+                {
+                    _settingObject.RemoveAt(_settingObject.Count - 1);
+                }
+                EditorGUILayout.EndHorizontal();
+                for (int i = 0; i < _settingObject.Count; i++)
                 {
                     _settingObject[i] =
                         (GameObject)EditorGUILayout.ObjectField(_settingObject[i], typeof(GameObject), true);
@@ -88,6 +94,7 @@ namespace GamesKeystoneFramework.Editor
                 {
                     foreach (var obj in _settingObject)
                     {
+                        if(obj == null) continue;
                         obj.transform.SetParent(_multiPlayerObjectGroup.transform);
                         obj.AddComponent<NetworkObject>();
                         obj.AddComponent<NetworkTransform>();
