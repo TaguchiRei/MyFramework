@@ -47,6 +47,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             try
             {
                 await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                MultiPlayManager.Instance.IsHost = false;
                 return true;
             }
             catch(Exception e)

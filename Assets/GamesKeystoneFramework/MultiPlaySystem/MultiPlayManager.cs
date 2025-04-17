@@ -11,6 +11,11 @@ namespace GamesKeystoneFramework.MultiPlaySystem
     {
         [Header("初期化完了しているかどうか")]
         public static bool CanMultiPlay;
+
+        /// <summary>
+        /// ホストかどうかを保存
+        /// </summary>
+        [HideInInspector] public bool IsHost;
     
         /// <summary>
         /// ロビーのリスト

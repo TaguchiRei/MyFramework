@@ -84,6 +84,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             try
             {
                 NetworkManager.Singleton.StartHost();
+                MultiPlayManager.Instance.IsHost = true;
                 return true;
             }
             catch (Exception e)
