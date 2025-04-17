@@ -15,7 +15,16 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public override void OnNetworkSpawn()
         {
             Debug.Log($"{gameObject.name} Spawn Complete");
-            
+            if (MultiPlayManager.Instance.IsHost)
+            {
+                //生成したことをマネージャーに通知する
+            }
+        }
+        
+        private void OnDrawGizmos()
+        {
+            Vector3 pos = transform.position;
+            Gizmos.DrawIcon(pos, "CommunicationMark.png", true);
         }
     }
 }

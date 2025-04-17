@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -9,6 +10,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 {
     public class MultiPlayManager : MonoBehaviour
     {
+        [SerializeField] private GameObject MultiPlayObjectGroup;
         [Header("初期化完了しているかどうか")]
         public static bool CanMultiPlay;
 
@@ -23,8 +25,12 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public static QueryLobbiesOptions QueryLobbiesOptions;
     
          public static MultiPlayManager Instance;
-    
-        /// <summary>
+
+         private UniTask<bool> _initializeTask;
+         
+         public List<MultiPlayObject> MultiPlayObjects = new List<MultiPlayObject>();
+
+         /// <summary>
         /// シーン開始時に必ずこのメソッドを動かすこと
         /// </summary>
         public void SingletonInitialize()
@@ -38,6 +44,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
             }
+            
+            _initializeTask = ServicesInitialize();
         }
     
     
@@ -68,6 +76,11 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             Debug.Log("Services initialized");
             CanMultiPlay = true;
             return true;
+        }
+
+        public void MultiObjectInstantiate()
+        {
+            
         }
     }
 }
