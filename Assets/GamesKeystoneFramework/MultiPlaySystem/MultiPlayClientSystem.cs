@@ -69,6 +69,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     allocation.Key,
                     allocation.ConnectionData,
                     allocation.HostConnectionData);
+                
+                    NetworkManager.Singleton.StartClient();
                 return true;
             }
             catch (Exception e)
