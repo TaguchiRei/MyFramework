@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -70,10 +71,28 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             return true;
         }
 
-        public void MultiObjectInstantiate()
+        public GameObject InstantiateMultiObject(GameObject obj,Vector3 position)
         {
-            var networkObjects = MultiPlayObjectGroup.GetComponentsInChildren<NetworkObject>();
-            Debug.Log($"networkObjects: {networkObjects.Length}");
+            if (obj == null)
+            {
+                Debug.Log("InstantiateMultiObject: obj is null");
+                return null;
+            }
+            
+            var spawnObj = Instantiate(obj,position,quaternion.identity);
+            var objNetworkObj = spawnObj.GetComponent<NetworkObject>();
+            if (objNetworkObj != null)
+            {
+                objNetworkObj.Spawn(true);
+            }
+            else
+            {
+                Debug.Log("NetworkObject Is Not found");
+                Destroy(spawnObj);
+                return null;
+            }
+
+            return spawnObj;
         }
     }
 }
