@@ -7,6 +7,8 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
 using UnityEngine;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
@@ -51,7 +53,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
             catch (Exception e)
             {
-                Debug.LogError($"Services Initialize Error: {e}");
+                Debug.LogError($"Services Initialize Error : {e}");
                 return false;
             }
         }
@@ -69,7 +71,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
             catch (Exception e)
             {
-                Debug.LogError($"Get Lobby List Error: {e}");
+                Debug.LogError($"Get Lobby List Error : {e}");
                 return (false,null);
             }
         }
@@ -81,7 +83,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         protected async UniTask<bool> LobbyCheck(string lobbyId)
         {
             try
-            {
+            { 
                 await LobbyService.Instance.GetLobbyAsync(lobbyId);
                 Debug.Log("Lobby Found");
                 return true;
@@ -105,17 +107,16 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             try
             {
                 var check = await LobbyCheck(lobbyId);
-                if (check)
-                {
-                    await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
-                    return true;
-                }
+                if (!check) return false;
+                
+                JoinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                Debug.Log("Join Success");
+                return true;
 
-                return false;
             }
             catch(Exception e)
             {
-                Debug.LogError($"Join Lobby Error{e.Message}");
+                Debug.LogError($"Join Lobby Error : {e.Message}");
                 return false;
             }
         }
@@ -132,26 +133,45 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 var lobbyId = LobbyList[LobbyNumber].Id;
                 var check = await LobbyCheck(lobbyId);
                 if (!check) return false;
-                await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                
+                JoinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                Debug.Log("Join Success");
                 return true;
 
             }
             catch (Exception e)
             {
-                Debug.LogError($"Join Lobby Error{e.Message}");
+                Debug.LogError($"Join Lobby Error : {e.Message}");
                 return false;
             }
         }
 
-        protected async UniTask<bool> JoinRelay(string joinCode)
+        /// <summary>
+        /// Relayに参加するために使用。Lobby参加後に使用
+        /// Relayに参加するために使用。Lobby参加後に使用
+        /// </summary>
+        /// <returns></returns>
+        protected async UniTask<bool> JoinRelay()
         {
             try
             {
+                var joinCode = JoinedLobby.Data["RelayJoinCode"].Value;
+                var allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+                Debug.Log("join Allocation");
+                _unityTransport.SetRelayServerData(
+                    allocation.RelayServer.IpV4,
+                    (ushort)allocation.RelayServer.Port,
+                    allocation.AllocationIdBytes,
+                    allocation.Key,
+                    allocation.ConnectionData,
+                    allocation.HostConnectionData);
+
+                NetworkManager.Singleton.StartClient();
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.LogError($"Join Relay Error : {e.Message}");
                 return false;
             }
         }
