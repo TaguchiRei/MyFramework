@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// 初期化を行う
         /// </summary>
         /// <returns></returns>
-        public async UniTask<bool> ServiceInitialize()
+        protected async UniTask<bool> ServiceInitialize()
         {
             CanMultiPlay = false;
             try
@@ -45,6 +46,26 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 return false;
             }
         }
+
+        /// <summary>
+        /// ロビーリストを取得する
+        /// </summary>
+        /// <returns></returns>
+        protected async UniTask<(bool,List<Lobby>)> GetAllLobbyList()
+        {
+            try
+            {
+                var lobbyList = await LobbyService.Instance.QueryLobbiesAsync();
+                return (true, lobbyList.Results);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Get Lobby List Error: {e}");
+                return (false,null);
+            }
+        }
+        
+        //--------------------クライアントサイド------------------------
     }
     
     /// <summary>
