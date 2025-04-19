@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using GamesKeystoneFramework.Legacy;
 using GamesKeystoneFramework.MultiPlaySystem;
 using Unity.Netcode;
 using Unity.Netcode.Components;
@@ -53,9 +52,9 @@ namespace GamesKeystoneFramework.Editor
 
                     //マルチプレイマネージャーのセットアップ
                     GameObject MultiPlayManager = new GameObject("MultiPlayManager");
-                    var manager = MultiPlayManager.AddComponent<MultiPlayManagerL>();
-                    MultiPlayManager.AddComponent<MultiPlayHostSystemL>();
-                    MultiPlayManager.AddComponent<MultiPlayHostSystemL>();
+                    var manager = MultiPlayManager.AddComponent<MultiPlayManager>();
+                    MultiPlayManager.AddComponent<MultiPlayHostSystem>();
+                    MultiPlayManager.AddComponent<MultiPlayHostSystem>();
                     MultiPlayManager.AddComponent<NetworkManager>();
                     MultiPlayManager.AddComponent<UnityTransport>();
                     SerializedObject managerObj = new SerializedObject(manager);

@@ -9,9 +9,9 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.Legacy
+namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public class MultiPlayHostSystemL : MonoBehaviour
+    public class MultiPlayHostSystem : MonoBehaviour
     {
         [SerializeField] LobbyData lobbyData;
 

@@ -8,9 +8,9 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.Legacy
+namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public class MultiPlayClientSystemL : MonoBehaviour
+    public class MultiPlayClientSystem : MonoBehaviour
     {
         public List<Lobby> _lobbies = new();
     

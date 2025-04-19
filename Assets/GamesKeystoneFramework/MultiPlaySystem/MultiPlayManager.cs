@@ -7,9 +7,9 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.Legacy
+namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public class MultiPlayManagerL : MonoBehaviour
+    public class MultiPlayManager : MonoBehaviour
     {
         [SerializeField] private GameObject MultiPlayObjectGroup;
         [Header("初期化完了しているかどうか")]
@@ -19,26 +19,6 @@ namespace GamesKeystoneFramework.Legacy
         /// ロビーのリスト
         /// </summary>
         public static QueryLobbiesOptions QueryLobbiesOptions;
-    
-         public static MultiPlayManagerL Instance;
-         
-        
-
-         /// <summary>
-        /// シーン開始時に必ずこのメソッドを動かすこと
-        /// </summary>
-        public void SingletonInitialize()
-        {
-            if (Instance != null)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-        }
     
     
         /// <summary>
