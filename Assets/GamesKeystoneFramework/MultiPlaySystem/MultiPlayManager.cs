@@ -14,12 +14,14 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         [Header("マルチプレイオブジェクトをこのオブジェクトの子要素にする")]
         [SerializeField] protected GameObject MultiPlayObjectGroup;
         
-        [SerializeField] LobbyData lobbyData;
+        [SerializeField] protected LobbyData lobbyData;
         
         /// <summary>
         /// 初期化完了しているか
         /// </summary>
         public static bool CanMultiPlay;
+        
+        protected List<Lobby> LobbyList;
 
         
         /// <summary>
@@ -65,7 +67,37 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
         }
         
+        
         //--------------------クライアントサイド------------------------
+
+        public async UniTask<bool> JoinLobbyFromLobbyID(string lobbyId)
+        {
+            try
+            {
+                await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                return true;
+            }
+            catch(Exception e)
+            {
+                Debug.LogError($"Join Lobby Error{e.Message}");
+                return false;
+            }
+        }
+
+        public async UniTask<bool> LeaveLobbyFromLobbyList(int LobbyNumber)
+        {
+            try
+            {
+                var lobbyId = LobbyList[LobbyNumber].Id;
+                await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
     
     /// <summary>
