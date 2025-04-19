@@ -1,9 +1,13 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+
 namespace GamesKeystoneFramework.Attributes
 {
     public class ReadOnlyAttribute : PropertyAttribute { }
-    
+
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer
     {
@@ -19,4 +23,5 @@ namespace GamesKeystoneFramework.Attributes
             return EditorGUI.GetPropertyHeight(property, label, true);
         }
     }
+#endif
 }
