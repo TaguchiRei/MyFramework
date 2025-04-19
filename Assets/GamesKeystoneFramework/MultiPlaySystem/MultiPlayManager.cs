@@ -18,18 +18,26 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         [Header("マルチプレイオブジェクトをこのオブジェクトの子要素にする")]
         [SerializeField] protected GameObject MultiPlayObjectGroup;
         
-        [SerializeField] protected LobbyData lobbyData;
+        [Header("ホストする際のロビー作成時に使用するデータ")]
+        [SerializeField] LobbyData lobbyData;
         
         /// <summary>
         /// 初期化完了しているか
         /// </summary>
         public static bool CanMultiPlay;
         
+        public static ConnectionStatus ConnectionStatus;
+        
+        /// <summary>
+        /// 取得済みロビーリスト
+        /// </summary>
         protected List<Lobby> LobbyList;
+        /// <summary>
+        /// 参加済みロビー
+        /// </summary>
+        protected Lobby JoinedLobby;
 
         private UnityTransport _unityTransport;
-
-        protected Lobby JoinedLobby;
         
         /// <summary>
         /// 初期化を行う
@@ -175,6 +183,81 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 return false;
             }
         }
+        //--------------------ホストサイド------------------------
+
+        /// <summary>
+        /// ロビーを作成する。必ずlobbyDataを設定してから実行すること
+        /// </summary>
+        /// <returns></returns>
+        public async UniTask<bool> ConnectionHost()
+        {
+            //------------アロケーション取得----------------
+            Allocation allocation;
+            try
+            {
+                allocation = await RelayService.Instance.CreateAllocationAsync(lobbyData.MaxPlayers);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Get Allocation Error : {e.Message}");
+                return false;
+            }
+
+            //--------------リレー設定---------------------
+            string relayJoinCode;
+            try
+            {
+                relayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+                var relayServerData = allocation.ToRelayServerData("dtls");
+                
+                _unityTransport.SetRelayServerData(relayServerData);
+            }
+            catch(Exception e)
+            {
+                Debug.LogError($"Get JoinCode Error : {e.Message}");
+                return false;
+            }
+            
+            //--------------ロビー作成---------------------
+            
+            try
+            {
+                var createLobbyOptions = new CreateLobbyOptions
+                {
+                    IsPrivate = lobbyData.IsPrivate,
+                    Data = lobbyData.Data,
+                };
+                if (!lobbyData.IsPrivate)
+                {
+                    Debug.Log($"Add JoinCode :{relayJoinCode}");
+                    createLobbyOptions.Data.Add("RelayJoinCode",new DataObject(lobbyData.VisibilityOptions,relayJoinCode));
+                }
+
+                await LobbyService.Instance.CreateLobbyAsync(
+                    lobbyData.LobbyName,
+                    lobbyData.MaxPlayers,
+                    createLobbyOptions);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Create Lobby Error : {e.Message}");
+                return false;
+            }
+
+            //-------------ホスト接続--------------
+            try
+            {
+                NetworkManager.Singleton.StartClient();
+                Debug.Log($"IsServer{NetworkManager.Singleton.IsServer}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Host Connection Error : {e.Message}");
+                return false;
+            }
+            return true;
+        }
     }
     
     /// <summary>
@@ -188,5 +271,12 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public bool IsPrivate;
         public DataObject.VisibilityOptions VisibilityOptions;
         public Dictionary<string, DataObject> Data;
+    }
+
+    public enum ConnectionStatus
+    {
+        OffLine,
+        ConnectedLobby,
+        ConnectedRelay
     }
 }
