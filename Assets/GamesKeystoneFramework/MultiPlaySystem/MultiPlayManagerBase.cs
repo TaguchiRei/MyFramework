@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using GamesKeystoneFramework.Attributes;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
@@ -25,8 +26,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// 初期化完了しているか
         /// </summary>
         public static bool CanMultiPlay;
-        
-        public static ConnectionStatus ConnectionStatus;
+        [ReadOnly] public static ConnectionStatus ConnectionStatus;
         
         /// <summary>
         /// 取得済みロビーリスト
