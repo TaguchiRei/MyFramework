@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public struct MultiPlayData : INetworkSerializable
+    public struct MultiPlayData : INetworkSerializable, IEquatable<MultiPlayData>
     {
         public DataType dataType;
         public string serializedValue;
@@ -42,6 +42,21 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         {
             serializer.SerializeValue(ref dataType);
             serializer.SerializeValue(ref serializedValue);
+        }
+
+        public bool Equals(MultiPlayData other)
+        {
+            return dataType == other.dataType && serializedValue == other.serializedValue;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MultiPlayData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)dataType, serializedValue);
         }
     }
 
