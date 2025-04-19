@@ -26,7 +26,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// 初期化完了しているか
         /// </summary>
         public static bool CanMultiPlay;
-        [ReadOnly] public static ConnectionStatus ConnectionStatus;
+        [ReadOnly] public ConnectionStatus ConnectionStatus;
         
         /// <summary>
         /// 取得済みロビーリスト
