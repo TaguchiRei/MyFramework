@@ -66,7 +66,25 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 return (false,null);
             }
         }
-        
+        /// <summary>
+        /// ロビーがまだ存在するかを調べる
+        /// </summary>
+        /// <param name="lobbyId"></param>
+        /// <returns></returns>
+        public async UniTask<bool> LobbyCheck(string lobbyId)
+        {
+            try
+            {
+                await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                Debug.Log("Lobby Found");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Lobby Not Found");
+                return false;
+            }
+        }
         
         //--------------------クライアントサイド------------------------
 
