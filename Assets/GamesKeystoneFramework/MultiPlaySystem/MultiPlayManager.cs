@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -23,6 +25,9 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         
         protected List<Lobby> LobbyList;
 
+        private UnityTransport _unityTransport;
+
+        protected Lobby JoinedLobby;
         
         /// <summary>
         /// 初期化を行う
@@ -33,6 +38,8 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             CanMultiPlay = false;
             try
             {
+                _unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+                Debug.Log("Unity Transport Set");
                 await UnityServices.InitializeAsync();
                 if (!AuthenticationService.Instance.IsSignedIn)
                 {
@@ -71,7 +78,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// </summary>
         /// <param name="lobbyId"></param>
         /// <returns></returns>
-        public async UniTask<bool> LobbyCheck(string lobbyId)
+        protected async UniTask<bool> LobbyCheck(string lobbyId)
         {
             try
             {
@@ -88,12 +95,23 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         
         //--------------------クライアントサイド------------------------
 
-        public async UniTask<bool> JoinLobbyFromLobbyID(string lobbyId)
+        /// <summary>
+        /// LobbyIDを利用してロビーに参加する
+        /// </summary>
+        /// <param name="lobbyId"></param>
+        /// <returns></returns>
+        protected async UniTask<bool> JoinLobbyFromLobbyID(string lobbyId)
         {
             try
             {
-                await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
-                return true;
+                var check = await LobbyCheck(lobbyId);
+                if (check)
+                {
+                    await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                    return true;
+                }
+
+                return false;
             }
             catch(Exception e)
             {
@@ -102,18 +120,39 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
         }
 
-        public async UniTask<bool> LeaveLobbyFromLobbyList(int LobbyNumber)
+        /// <summary>
+        /// ロビーリストからロビーに参加する
+        /// </summary>
+        /// <param name="LobbyNumber"></param>
+        /// <returns></returns>
+        protected async UniTask<bool> JoinLobbyFromLobbyList(int LobbyNumber)
         {
             try
             {
                 var lobbyId = LobbyList[LobbyNumber].Id;
-                await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                var check = await LobbyCheck(lobbyId);
+                if (!check) return false;
                 await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Join Lobby Error{e.Message}");
+                return false;
+            }
+        }
+
+        protected async UniTask<bool> JoinRelay(string joinCode)
+        {
+            try
+            {
+                return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
+                return false;
             }
         }
     }
