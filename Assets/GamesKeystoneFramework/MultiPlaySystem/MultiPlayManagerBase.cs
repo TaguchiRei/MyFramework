@@ -20,7 +20,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public bool CanMultiPlay { get; private set; }
 
 
-        [SerializeField,Grouping,Header("必須")] private SystemClass _systemClass;
+        [SerializeField,Grouping,Header("必須")] protected SystemClass _systemClass;
         
         [SerializeField, Grouping,Header("ロビーを作成する際に使用するデータ")]
         protected LobbyData lobbyData;
@@ -87,6 +87,10 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
         }
 
+        /// <summary>
+        /// ホスト接続する際に使用する
+        /// </summary>
+        /// <returns></returns>
         protected async UniTask<bool> HostConnect()
         {
             if(!CanMultiPlay) return false;
@@ -130,7 +134,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             return true;
         }
 
-        protected GameObject InstantiateMultiObject(GameObject obj,Vector3 position)
+        protected GameObject InstantiateMultiObject(GameObject obj,Vector3 position, Quaternion rotation = default)
         {
             if (obj == null)
             {
@@ -143,6 +147,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             if (objNetworkObj != null)
             {
                 objNetworkObj.Spawn(true);
+                spawnObj.transform.SetParent(MultiPlayObjectGroup.transform);
             }
             else
             {
@@ -150,7 +155,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 Destroy(spawnObj);
                 return null;
             }
-
+            Debug.Log("ObjectSpawn Success");
             return spawnObj;
         }
         
@@ -158,7 +163,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
     }
 
     [Serializable]
-    struct SystemClass
+    public struct SystemClass
     {
         public MultiPlayHostSystem MultiPlayHostSystem;
         public MultiPlayClientSystem MultiPlayClient;
