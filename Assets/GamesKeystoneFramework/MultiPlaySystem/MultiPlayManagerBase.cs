@@ -118,6 +118,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 if (!check) return false;
                 
                 JoinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                ConnectionStatus = ConnectionStatus.ConnectedLobby;
                 Debug.Log("Join Success");
                 return true;
 
@@ -143,6 +144,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 if (!check) return false;
                 
                 JoinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                ConnectionStatus = ConnectionStatus.ConnectedLobby;
                 Debug.Log("Join Success");
                 return true;
 
@@ -175,11 +177,32 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     allocation.HostConnectionData);
 
                 NetworkManager.Singleton.StartClient();
+                ConnectionStatus = ConnectionStatus.ConnectedRelay;
                 return true;
             }
             catch (Exception e)
             {
                 Debug.LogError($"Join Relay Error : {e.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 接続を完全に切断する際に使用する
+        /// </summary>
+        /// <returns></returns>
+        protected async UniTask<bool> DisConnect()
+        {
+            if (!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsClient) return false;
+            try
+            {
+                NetworkManager.Singleton.Shutdown();
+                await LobbyService.Instance.RemovePlayerAsync(JoinedLobby.Id, AuthenticationService.Instance.PlayerId);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Disconnect Error : {e.Message}");
                 return false;
             }
         }
@@ -191,7 +214,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// <returns></returns>
         public async UniTask<bool> ConnectionHost()
         {
-            //------------アロケーション取得----------------
+            //アロケーション取得
             Allocation allocation;
             try
             {
@@ -203,7 +226,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 return false;
             }
 
-            //--------------リレー設定---------------------
+            //リレー設定
             string relayJoinCode;
             try
             {
@@ -219,7 +242,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 return false;
             }
             
-            //--------------ロビー作成---------------------
+            //ロビー作成
             
             try
             {
@@ -234,7 +257,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     createLobbyOptions.Data.Add("RelayJoinCode",new DataObject(lobbyData.VisibilityOptions,relayJoinCode));
                 }
 
-                await LobbyService.Instance.CreateLobbyAsync(
+                JoinedLobby = await LobbyService.Instance.CreateLobbyAsync(
                     lobbyData.LobbyName,
                     lobbyData.MaxPlayers,
                     createLobbyOptions);
@@ -245,10 +268,10 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 return false;
             }
 
-            //-------------ホスト接続--------------
+            //ホスト接続
             try
-            {
-                NetworkManager.Singleton.StartClient();
+            { 
+                NetworkManager.Singleton.StartHost();
                 Debug.Log($"IsServer{NetworkManager.Singleton.IsServer}");
             }
             catch (Exception e)
@@ -256,6 +279,9 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 Debug.LogError($"Host Connection Error : {e.Message}");
                 return false;
             }
+
+            ConnectionStatus = ConnectionStatus.ConnectedRelay;
+            Debug.Log("Connect Success");
             return true;
         }
     }
