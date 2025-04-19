@@ -18,7 +18,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     DataType.Float => float.TryParse(serializedValue, out var floatValue) ? floatValue : 0,
                     DataType.String => serializedValue,
                     DataType.Bool => bool.TryParse(serializedValue, out var boolValue) ? boolValue : false,
-                    DataType.Char => char.TryParse(serializedValue, out var charValue) ? charValue : '\0',
                     _ => null
                 };
                 return obj;
@@ -32,7 +31,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                     float => DataType.Float,
                     string => DataType.String,
                     bool => DataType.Bool,
-                    char => DataType.Char,
                     _ => throw new InvalidOperationException($"未対応の型　: {value.GetType()}")
                 };
             }
@@ -66,6 +64,14 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         Float,
         Bool,
         String,
-        Char,
+    }
+
+    struct MyStruct
+    {
+        public int a;
+        public string b; 
+        public char c;
+        public float d;
+        public bool e;
     }
 }
