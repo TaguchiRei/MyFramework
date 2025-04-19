@@ -52,9 +52,9 @@ namespace GamesKeystoneFramework.Editor
 
                     //マルチプレイマネージャーのセットアップ
                     GameObject MultiPlayManager = new GameObject("MultiPlayManager");
-                    var manager = MultiPlayManager.AddComponent<MultiPlayManager>();
-                    MultiPlayManager.AddComponent<MultiPlayHostSystem>();
-                    MultiPlayManager.AddComponent<MultiPlayHostSystem>();
+                    var manager = MultiPlayManager.AddComponent<MultiPlayManagerL>();
+                    MultiPlayManager.AddComponent<MultiPlayHostSystemL>();
+                    MultiPlayManager.AddComponent<MultiPlayHostSystemL>();
                     MultiPlayManager.AddComponent<NetworkManager>();
                     MultiPlayManager.AddComponent<UnityTransport>();
                     SerializedObject managerObj = new SerializedObject(manager);

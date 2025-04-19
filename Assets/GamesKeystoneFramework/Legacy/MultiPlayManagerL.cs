@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public class MultiPlayManager : MonoBehaviour
+    public class MultiPlayManagerL : MonoBehaviour
     {
         [SerializeField] private GameObject MultiPlayObjectGroup;
         [Header("初期化完了しているかどうか")]
@@ -21,7 +21,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// </summary>
         public static QueryLobbiesOptions QueryLobbiesOptions;
     
-         public static MultiPlayManager Instance;
+         public static MultiPlayManagerL Instance;
          
         
 

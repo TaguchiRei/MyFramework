@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public class MultiPlayHostSystem : MonoBehaviour
+    public class MultiPlayHostSystemL : MonoBehaviour
     {
         [SerializeField] LobbyData lobbyData;
 
