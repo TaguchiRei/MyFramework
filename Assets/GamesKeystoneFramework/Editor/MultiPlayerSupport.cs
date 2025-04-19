@@ -52,11 +52,13 @@ namespace GamesKeystoneFramework.Editor
 
                     //マルチプレイマネージャーのセットアップ
                     GameObject MultiPlayManager = new GameObject("MultiPlayManager");
-                    var manager = MultiPlayManager.AddComponent<MultiPlayManager>();
+                    
+                    //var manager = MultiPlayManager.AddComponent<MultiPlayManager>();
                     MultiPlayManager.AddComponent<MultiPlayHostSystem>();
                     MultiPlayManager.AddComponent<MultiPlayHostSystem>();
                     MultiPlayManager.AddComponent<NetworkManager>();
                     MultiPlayManager.AddComponent<UnityTransport>();
+                    /*
                     SerializedObject managerObj = new SerializedObject(manager);
                     SerializedProperty managerProp = managerObj.FindProperty("MultiPlayObjectGroup");
                     if (managerProp != null)
@@ -69,6 +71,7 @@ namespace GamesKeystoneFramework.Editor
                     {
                         Debug.Log("Property :MultiPlayerObjectGroup is not found");
                     }
+                    */
                 }
             }
             else

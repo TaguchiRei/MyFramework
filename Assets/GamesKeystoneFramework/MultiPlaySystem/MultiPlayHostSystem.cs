@@ -13,19 +13,10 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 {
     public class MultiPlayHostSystem : MonoBehaviour
     {
-        [SerializeField] LobbyData lobbyData;
-
-        /// <summary>
-        /// 作成したロビーのjoinCode
-        /// </summary>
-        public string RelayJoinCode { get; private set; }
-
-        private CreateLobbyOptions createLobbyOptions = new();
-
         /// <summary>
         /// ロビーを作成する際に使用するメソッド。
         /// </summary>
-        public async UniTask<bool> CreateLobby()
+        public async UniTask<bool> CreateLobby(LobbyData lobbyData)
         {
             try
             {
@@ -34,7 +25,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 lobbyData.Data ??= new();
 
                 //Lobbyの作成
-                createLobbyOptions = new CreateLobbyOptions
+                var createLobbyOptions = new CreateLobbyOptions
                 {
                     IsPrivate = lobbyData.IsPrivate,
                     IsLocked = lobbyData.IsLocked,
@@ -42,12 +33,12 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 };
 
                 //RelayJoinCode取得と追加
-                RelayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                var relayJoinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
                 if (!lobbyData.IsPrivate)
                 {
-                    Debug.Log($"Add JoinCode : {RelayJoinCode}");
+                    Debug.Log($"Add JoinCode : {relayJoinCode}");
                     createLobbyOptions.Data.Add("RelayJoinCode",
-                        new DataObject(lobbyData.VisibilityOptions, RelayJoinCode));
+                        new DataObject(lobbyData.VisibilityOptions, relayJoinCode));
                 }
 
                 //ロビー作成
@@ -80,20 +71,6 @@ namespace GamesKeystoneFramework.MultiPlaySystem
                 Debug.LogError($"Connection Host Error :{e.Message}");
                 return false;
             }
-        }
-
-        /// <summary>
-        /// ロビー作成時に設定する項目をまとめた構造体
-        /// </summary>
-        [Serializable]
-        public struct LobbyData
-        {
-            public string LobbyName;
-            public int MaxPlayers;
-            public bool IsPrivate;
-            public bool IsLocked;
-            public DataObject.VisibilityOptions VisibilityOptions;
-            public Dictionary<string, DataObject> Data;
         }
     }
 }

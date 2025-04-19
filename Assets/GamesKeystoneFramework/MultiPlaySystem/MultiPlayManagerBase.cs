@@ -12,14 +12,22 @@ using UnityEngine;
 
 namespace GamesKeystoneFramework.MultiPlaySystem
 {
-    public abstract class MultiPlayManager : MonoBehaviour
+    public abstract class MultiPlayManagerBase : MonoBehaviour
     {
         [SerializeField] private GameObject MultiPlayObjectGroup;
-        [Header("初期化完了しているかどうか")]
-        public static bool CanMultiPlay;
+
+        [field: Header("初期化完了しているかどうか")]
+        public bool CanMultiPlay { get; private set; }
+
+
+        [SerializeField,Grouping,Header("必須")] private SystemClass _systemClass;
         
-        [SerializeField, ReadOnlyInInspector] LobbyData lobbyData;
-    
+        [SerializeField, Grouping,Header("ロビーを作成する際に使用するデータ")]
+        protected LobbyData lobbyData;
+        
+        [SerializeField, ReadOnlyInInspector,Header("接続状況")]
+        private ConnectionPhase connectionPhase;
+        
         /// <summary>
         /// ロビーのリスト
         /// </summary>
@@ -32,8 +40,9 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// 一度だけ使用する
         /// 通信エラー発生時はfalseを返す
         /// </summary>
-        public async UniTask<bool> ServicesInitialize()
+        protected async UniTask<bool> ServicesInitialize()
         {
+            connectionPhase = ConnectionPhase.NotInitialized;
             //ゲーム側のサービス初期化
             try
             {
@@ -53,6 +62,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         
             Debug.Log("Services initialized");
             CanMultiPlay = true;
+            connectionPhase = ConnectionPhase.OffLine; 
             return true;
         }
 
@@ -60,13 +70,14 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// 通信を切断する際に使用する
         /// </summary>
         /// <returns></returns>
-        public async UniTask<bool> DisConnect()
+        protected async UniTask<bool> DisConnect()
         {
             if(!NetworkManager.Singleton.IsHost && !NetworkManager.Singleton.IsServer)return false;
             try
             {
                 NetworkManager.Singleton.Shutdown();
                 await LobbyService.Instance.RemovePlayerAsync(_joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+                connectionPhase = ConnectionPhase.OffLine;
                 return true;
             }
             catch (Exception e)
@@ -76,14 +87,50 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
         }
 
-        public async UniTask<bool> HostConnect()
+        protected async UniTask<bool> HostConnect()
         {
             if(!CanMultiPlay) return false;
-            
-            var 
+
+            var lobbySetting = await _systemClass.MultiPlayHostSystem.CreateLobby(lobbyData);
+            if (!lobbySetting)
+            {
+                Debug.Log("HostConnect Failed");
+                return false;
+            }
+
+            if (_systemClass.MultiPlayHostSystem.ConnectionHost())
+            {
+                Debug.Log("HostConnect Success");
+                return true;
+            }
+
+            Debug.Log("HostConnect Failed");
+            return false;
         }
 
-        public GameObject InstantiateMultiObject(GameObject obj,Vector3 position)
+        protected async UniTask<bool> ClientConnect(Lobby lobby)
+        {
+            var joinLobby = await _systemClass.MultiPlayClient.JoinLobbyFromLobbyId(lobby.Id);
+            if (!joinLobby)
+            {
+                Debug.Log("LobbyConnect Failed");
+                return false;
+            }
+            connectionPhase = ConnectionPhase.JoinLobby;
+            Debug.Log("LobbyConnect Success");
+            var relayId = lobby.Data["RelayJoinCode"].Value;
+            var joinRelay = await _systemClass.MultiPlayClient.JoinRelay(relayId);
+            if (!joinRelay)
+            {
+                Debug.Log("LobbyConnect Failed");
+                return false;
+            }
+            connectionPhase = ConnectionPhase.JoinRelay;
+            Debug.Log("LobbyConnect Success");
+            return true;
+        }
+
+        protected GameObject InstantiateMultiObject(GameObject obj,Vector3 position)
         {
             if (obj == null)
             {
@@ -109,6 +156,13 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         
         
     }
+
+    [Serializable]
+    struct SystemClass
+    {
+        public MultiPlayHostSystem MultiPlayHostSystem;
+        public MultiPlayClientSystem MultiPlayClient;
+    }
     /// <summary>
     /// ロビー作成時に設定する項目をまとめた構造体
     /// </summary>
@@ -121,5 +175,13 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public bool IsLocked;
         public DataObject.VisibilityOptions VisibilityOptions;
         public Dictionary<string, DataObject> Data;
+    }
+
+    public enum ConnectionPhase
+    {
+        NotInitialized,
+        OffLine,
+        JoinLobby,
+        JoinRelay
     }
 }

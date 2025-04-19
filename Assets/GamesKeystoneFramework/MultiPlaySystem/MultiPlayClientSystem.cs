@@ -12,49 +12,68 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 {
     public class MultiPlayClientSystem : MonoBehaviour
     {
-        public List<Lobby> _lobbies = new();
-    
         /// <summary>
         /// ロビーリストの取得に使う。
         /// </summary>
         /// <returns></returns>
-        public async UniTask<bool> GetLobbyList()
+        public async UniTask<(bool,List<Lobby>)> GetAllLobbyList()
         {
             try
             {
-                var response = await LobbyService.Instance.QueryLobbiesAsync();
-                _lobbies = response.Results;
-                if (_lobbies.Count == 0)
-                {
-                    Debug.Log("Lobby Not Found");
-                    return false;
-                }
+                var lobbyList = await LobbyService.Instance.QueryLobbiesAsync();
+                return (true, lobbyList.Results);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Get Lobby List Error : {e}");
+                return (false,null);
+            }
+        }
+        
+        /// <summary>
+        /// ロビーがまだ存在するかを調べる
+        /// </summary>
+        /// <param name="lobbyId"></param>
+        /// <returns></returns>
+        protected async UniTask<bool> LobbyCheck(string lobbyId)
+        {
+            try
+            { 
+                await LobbyService.Instance.GetLobbyAsync(lobbyId);
+                Debug.Log("Lobby Found");
                 return true;
             }
             catch (Exception e)
             {
-                Debug.LogError($"Get Lobby List Error{e.Message}");
+                Debug.Log($"Lobby Not Found : {e.Message}");
                 return false;
             }
         }
+        
         /// <summary>
         /// ロビーコードを利用したロビー参加に使う
         /// </summary>
         /// <param name="lobbyId"></param>
         /// <returns></returns>
-        public async UniTask<bool> JoinLobby(string lobbyId)
+        public async UniTask<bool> JoinLobbyFromLobbyId(string lobbyId)
         {
             try
             {
+                var check = await LobbyCheck(lobbyId);
+                if (!check) return false;
+                
                 await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+                Debug.Log("Join Success");
                 return true;
+
             }
             catch(Exception e)
             {
-                Debug.LogError($"Join Lobby Error{e.Message}");
+                Debug.LogError($"Join Lobby Error : {e}");
                 return false;
             }
         }
+        
 
         public async UniTask<bool> JoinRelay(string joinCode)
         {
