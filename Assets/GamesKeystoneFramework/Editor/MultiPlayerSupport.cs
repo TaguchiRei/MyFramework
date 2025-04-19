@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GamesKeystoneFramework.Legacy;
 using GamesKeystoneFramework.MultiPlaySystem;
 using Unity.Netcode;
 using Unity.Netcode.Components;

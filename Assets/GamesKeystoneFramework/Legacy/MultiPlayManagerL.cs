@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -8,7 +7,7 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.MultiPlaySystem
+namespace GamesKeystoneFramework.Legacy
 {
     public class MultiPlayManagerL : MonoBehaviour
     {

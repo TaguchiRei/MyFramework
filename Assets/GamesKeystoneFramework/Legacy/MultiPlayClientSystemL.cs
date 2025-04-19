@@ -8,7 +8,7 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.MultiPlaySystem
+namespace GamesKeystoneFramework.Legacy
 {
     public class MultiPlayClientSystemL : MonoBehaviour
     {

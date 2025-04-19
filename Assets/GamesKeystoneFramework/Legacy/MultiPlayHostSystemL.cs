@@ -9,7 +9,7 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.MultiPlaySystem
+namespace GamesKeystoneFramework.Legacy
 {
     public class MultiPlayHostSystemL : MonoBehaviour
     {
