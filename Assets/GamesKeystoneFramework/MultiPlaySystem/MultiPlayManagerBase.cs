@@ -20,13 +20,13 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         [SerializeField] protected GameObject MultiPlayObjectGroup;
         
         [Header("ホストする際のロビー作成時に使用するデータ")]
-        [SerializeField] LobbyData lobbyData;
+        [SerializeField,Grouping] LobbyData lobbyData;
         
         /// <summary>
         /// 初期化完了しているか
         /// </summary>
         public static bool CanMultiPlay;
-        [ReadOnly] public ConnectionStatus ConnectionStatus;
+        [ReadOnlyInInspector] public ConnectionStatus ConnectionStatus;
         
         /// <summary>
         /// 取得済みロビーリスト
@@ -98,7 +98,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
             }
             catch (Exception e)
             {
-                Debug.Log("Lobby Not Found");
+                Debug.Log($"Lobby Not Found : {e.Message}");
                 return false;
             }
         }

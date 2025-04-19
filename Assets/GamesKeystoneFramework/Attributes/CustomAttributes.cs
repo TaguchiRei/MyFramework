@@ -5,10 +5,23 @@ using UnityEditor;
 
 namespace GamesKeystoneFramework.Attributes
 {
-    public class ReadOnlyAttribute : PropertyAttribute { }
+    /// <summary>
+    /// インスペクター上で閲覧専用にする
+    /// </summary>
+    public class ReadOnlyInInspectorAttribute : PropertyAttribute
+    {
+    }
 
+    public class GroupingAttribute : PropertyAttribute
+    {
+    }
+
+    //エディター専用のアテリビュート
 #if UNITY_EDITOR
-    [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+
+    #region ReadOnly
+
+    [CustomPropertyDrawer(typeof(ReadOnlyInInspectorAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -23,5 +36,41 @@ namespace GamesKeystoneFramework.Attributes
             return EditorGUI.GetPropertyHeight(property, label, true);
         }
     }
+
+    #endregion
+
+    #region Highlight
+
+    [CustomPropertyDrawer(typeof(GroupingAttribute))]
+    public class HighlightDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            GroupingAttribute grouping = (GroupingAttribute)attribute;
+
+            // 元のGUIカラーを保存
+            Color previousColor = GUI.backgroundColor;
+
+            // 背景カラーを変更
+            GUI.backgroundColor = Color.white;
+
+            // ボックス風の背景を描画
+            GUI.Box(position, GUIContent.none);
+
+            // GUIカラーを元に戻す
+            GUI.backgroundColor = previousColor;
+
+            // 変数のフィールドを描画（ちょっと内側に）
+            Rect innerRect = new Rect(position.x + 4, position.y + 2, position.width - 8, position.height - 4);
+            EditorGUI.PropertyField(innerRect, property, label, true);
+        }
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label, true) + 4;
+        }
+    }
+    #endregion
+    
 #endif
 }
