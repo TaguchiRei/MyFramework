@@ -26,9 +26,10 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// クライアントにデータを送信
         /// サーバー側で呼び出すとクライアント側で実行される
         /// </summary>
-        [ClientRpc]
+        [ClientRpc(RequireOwnership = false)]
         public void SendDataToClientRPC(MultiPlayData multiPlayData)
         {
+            if(NetworkManager.Singleton.IsHost)return;
             Debug.Log(multiPlayData.Value);
         }
 
@@ -36,7 +37,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         /// サーバーにデータを送信
         /// クライアント側で呼び出すとサーバー側で実行される
         /// </summary>
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         public void SendDataToServerRPC(MultiPlayData multiPlayData)
         {
             Debug.Log(multiPlayData.Value);
