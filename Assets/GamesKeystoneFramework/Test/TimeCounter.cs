@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.DebugWatch
+namespace GamesKeystoneFramework.Test
 {
-    public class TimeCounter : MonoBehaviour
+    public class TimeCounter
     {
         private Dictionary<string, Stopwatch> watchesDict = new Dictionary<string, Stopwatch>();
         
