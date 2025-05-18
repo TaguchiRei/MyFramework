@@ -1,5 +1,7 @@
 using UnityEngine;
 #if UNITY_EDITOR
+using System;
+using Unity.VisualScripting;
 using UnityEditor;
 #endif
 
@@ -8,11 +10,14 @@ namespace GamesKeystoneFramework.Attributes
     /// <summary>
     /// インスペクター上で閲覧専用にする
     /// </summary>
-    public class ReadOnlyInInspectorAttribute : PropertyAttribute
+    public class KeyReadOnlyAttribute : PropertyAttribute
     {
     }
 
-    public class GroupingAttribute : PropertyAttribute
+    /// <summary>
+    /// インスペクター上で表示非表示を切り替えられるブロックにする
+    /// </summary>
+    public class KeyGroupingAttribute : PropertyAttribute
     {
     }
 
@@ -21,7 +26,7 @@ namespace GamesKeystoneFramework.Attributes
 
     #region ReadOnly
 
-    [CustomPropertyDrawer(typeof(ReadOnlyInInspectorAttribute))]
+    [CustomPropertyDrawer(typeof(KeyReadOnlyAttribute))]
     public class ReadOnlyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -41,12 +46,12 @@ namespace GamesKeystoneFramework.Attributes
 
     #region Highlight
 
-    [CustomPropertyDrawer(typeof(GroupingAttribute))]
+    [CustomPropertyDrawer(typeof(KeyGroupingAttribute))]
     public class HighlightDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            GroupingAttribute grouping = (GroupingAttribute)attribute;
+            KeyGroupingAttribute keyGrouping = (KeyGroupingAttribute)attribute;
 
             // 元のGUIカラーを保存
             Color previousColor = GUI.backgroundColor;

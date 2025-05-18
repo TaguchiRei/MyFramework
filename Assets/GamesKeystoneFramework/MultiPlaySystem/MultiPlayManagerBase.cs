@@ -20,12 +20,12 @@ namespace GamesKeystoneFramework.MultiPlaySystem
         public bool CanMultiPlay { get; private set; }
 
 
-        [SerializeField,Grouping,Header("必須")] protected SystemClass _systemClass;
+        [SerializeField,KeyGrouping,Header("必須")] protected SystemClass _systemClass;
         
-        [SerializeField, Grouping,Header("ロビーを作成する際に使用するデータ")]
+        [SerializeField, KeyGrouping,Header("ロビーを作成する際に使用するデータ")]
         protected LobbyData lobbyData;
         
-        [SerializeField, ReadOnlyInInspector,Header("接続状況")]
+        [SerializeField, KeyReadOnly,Header("接続状況")]
         private ConnectionPhase connectionPhase;
         
         /// <summary>
