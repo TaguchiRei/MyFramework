@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 
-namespace GamesKeystoneFramework.Debug
+namespace GamesKeystoneFramework.DebugWatch
 {
     public class TimeCounter : MonoBehaviour
     {

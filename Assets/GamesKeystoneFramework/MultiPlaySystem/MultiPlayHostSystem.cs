@@ -59,6 +59,7 @@ namespace GamesKeystoneFramework.MultiPlaySystem
 
         public bool ConnectionHost()
         {
+            
             //ホストとして接続
             try
             {
