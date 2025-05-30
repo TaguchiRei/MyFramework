@@ -10,6 +10,7 @@ namespace GamesKeystoneFramework.Test
 #if UNITY_EDITOR
         private T _oldValue;
 #endif
+        
 
         public T Value
         {
@@ -39,13 +40,11 @@ namespace GamesKeystoneFramework.Test
             _value = initialValue;
             _oldValue = initialValue;
         }
-        // T → KeyObservable<T> への変換（代入時に使う）
+        
         public static implicit operator KeyObservable<T>(T value)
         {
             return new KeyObservable<T>(value);
         }
-
-        // KeyObservable<T> → T への変換（読み取り時に使う）
         public static implicit operator T(KeyObservable<T> observable)
         {
             return observable.Value;
