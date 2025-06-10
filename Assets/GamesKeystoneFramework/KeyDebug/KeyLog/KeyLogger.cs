@@ -11,7 +11,6 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
 {
     public static class KeyLogger
     {
-        private static readonly Vector2 Anchor = new(0f, 1f);
         private static Canvas _canvas;
         private static TextMeshProUGUI _logText;
         private static KeyTesterUpdateMonitoring _updateMonitor;
@@ -65,9 +64,10 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             {
                 st.Append($"<color=purple>{type.GetType().Name}</color><color=black> : </color>");
             }
-            st.Append($"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}\n<noparse id=3></noparse>");
+            st.Append($"\n<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}   [END]");
             string log = st.ToString();
             _logText.text += log;
+            _updateMonitor._logQueue.Enqueue(Time.time);
         }
 
         
@@ -120,10 +120,10 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
 
         public static void OldLogDelete()
         {
-            int index = _logText.text.IndexOf("<noparse id=3></noparse>", StringComparison.Ordinal);
+            int index = _logText.text.IndexOf("[END]", StringComparison.Ordinal);
             if (index != -1)
             {
-                _logText.text = _logText.text.Substring(index + "<noparse id=3></noparse>".Length);
+                _logText.text = _logText.text.Substring(index + "[END]".Length);
             }
         }
     }

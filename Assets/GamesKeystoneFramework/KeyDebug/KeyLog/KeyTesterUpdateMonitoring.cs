@@ -5,13 +5,13 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
 {
     public class KeyTesterUpdateMonitoring : MonoBehaviour
     {
-        public Queue<(float,int)> _logQueue = new();
+        public Queue<float> _logQueue = new();
         public float LogDeleteTime = 7;
         
 
         private void Update()
         {
-            if (_logQueue.TryPeek(out (float,int) value) && value.Item1 + LogDeleteTime < Time.time)
+            if (_logQueue.TryPeek(out float value) && value + LogDeleteTime < Time.time)
             {
                 _logQueue.Dequeue();
                 KeyLogger.OldLogDelete();
