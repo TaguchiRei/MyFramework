@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -7,6 +8,7 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
 {
     public static class KeyTester
     {
+        private static readonly Vector3 TextPos = new Vector3(110,350,0);
         private static Canvas _canvas;
         private static TextMeshProUGUI _logText;
         private static Queue<float> _logTimes;
@@ -20,15 +22,24 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             var logCanvas = new GameObject("KeyTesterCanvas");
             _canvas = logCanvas.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            //キャンバスにUpdate監視追加
+            logCanvas.AddComponent<KeyTesterUpdateMonitoring>();
             //ログテキスト作成
             var logTextObject = new GameObject("KeyTesterLogText");
             _logText = logTextObject.AddComponent<TextMeshProUGUI>();
             _logText.transform.SetParent(_canvas.transform);
-            Log("KeyTester Initialized");
+            _logText.rectTransform.position = TextPos;
+            _logText.textWrappingMode = TextWrappingModes.NoWrap;
+            _logText.richText = true;
+            //stringBuilder準備
+            _logStringBuilder = new StringBuilder();
+            Log("KeyTester Initialized",Color.cyan);
         }
-        public static void Log(string message, Color color = default)
+        public static void Log(string message, Color color = default, Type type = null)
         {
             _logStringBuilder.Append($"{message}\n");
+            if(color == default) color = Color.black;
+            _logText.text += $"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}</color>\n";
         }
 
         public static void OldLogDelete()

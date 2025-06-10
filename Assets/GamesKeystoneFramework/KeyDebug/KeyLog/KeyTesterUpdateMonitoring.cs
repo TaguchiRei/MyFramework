@@ -12,7 +12,7 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             if (_logQueue.TryPeek(out float value))
             {
                 _logQueue.Dequeue();
-                
+                KeyTester.OldLogDelete();
             }
         }
     }
