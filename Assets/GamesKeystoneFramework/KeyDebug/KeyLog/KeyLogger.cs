@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using JetBrains.Annotations;
 using TMPro;
+using UnityEditor.iOS;
 using UnityEngine;
 using UnityEngine.UI;
 using ColorUtility = UnityEngine.ColorUtility;
@@ -14,7 +15,8 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
         private static Canvas _canvas;
         private static TextMeshProUGUI _logText;
         private static KeyTesterUpdateMonitoring _updateMonitor;
-        
+        public static TMP_FontAsset FontAsset;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Initialize()
         {
@@ -24,29 +26,39 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             var logCanvasScaler = logCanvas.AddComponent<CanvasScaler>();
             logCanvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            
+
             //キャンバスにUpdate監視追加
             _updateMonitor = logCanvas.AddComponent<KeyTesterUpdateMonitoring>();
-            
+
             //ログテキスト作成
             var logTextObject = new GameObject("KeyTesterLogText");
             _logText = logTextObject.AddComponent<TextMeshProUGUI>();
             _logText.transform.SetParent(_canvas.transform);
-            
+
             //ログテキストの位置を決定
             _logText.rectTransform.anchorMax = Vector2.up;
             _logText.rectTransform.anchorMin = Vector2.up;
             _logText.rectTransform.pivot = Vector2.up;
             _logText.rectTransform.anchoredPosition = Vector2.zero;
-            
+
             //ログテキストの初期化
             _logText.textWrappingMode = TextWrappingModes.NoWrap;
+            try
+            {
+                _logText.font = Resources.Load<TMP_FontAsset>("Fonts/DefaultJapaneseFontAsset");
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Fonts/DefaultJapaneseFontAsset Not Found");
+                throw;
+            }
+
             _logText.richText = true;
             _logText.fontSize = 14;
-            
+
             //_allLogs準備
-            
-            Log("<color=purple>KeyTester</color> <color=black>:</color> Initialized",Color.cyan);
+
+            Log("<color=purple>KeyTester</color> <color=black>:</color> Initialized", Color.cyan);
         }
 
         /// <summary>
@@ -55,22 +67,23 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
         /// <param name="message"></param>
         /// <param name="type"></param>
         /// <param name="color"></param>
-        private static void LogInternal(string message, object type , Color color)
+        private static void LogInternal(string message, object type, Color color)
         {
-            if(color == default) color = Color.black;
+            if (color == default) color = Color.black;
 
             StringBuilder st = new();
             if (type != null)
             {
                 st.Append($"<color=purple>{type.GetType().Name}</color><color=black> : </color>");
             }
-            st.Append($"\n<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}   [END]");
+
+            st.Append($"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}\n<s></s>");
             string log = st.ToString();
             _logText.text += log;
             _updateMonitor._logQueue.Enqueue(Time.time);
         }
 
-        
+
         /// <summary>
         /// 画面上にログを流す。
         /// </summary>
@@ -105,7 +118,7 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
 
         public static void LogError(string message)
         {
-            LogInternal($"[Error] {message}", null ,Color.red);
+            LogInternal($"[Error] {message}", null, Color.red);
         }
 
         public static void LogError<T>(string message, [NotNull] T type)
@@ -120,10 +133,10 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
 
         public static void OldLogDelete()
         {
-            int index = _logText.text.IndexOf("[END]", StringComparison.Ordinal);
+            int index = _logText.text.IndexOf("<s></s>", StringComparison.Ordinal);
             if (index != -1)
             {
-                _logText.text = _logText.text.Substring(index + "[END]".Length);
+                _logText.text = _logText.text.Substring(index + "<s></s>".Length);
             }
         }
     }
