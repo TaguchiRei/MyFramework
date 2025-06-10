@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using JetBrains.Annotations;
@@ -14,10 +15,6 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
         private static Canvas _canvas;
         private static TextMeshProUGUI _logText;
         private static KeyTesterUpdateMonitoring _updateMonitor;
-        
-        private static List<string> _allLogs = new List<string>();
-
-        private static int _mostOldLog;
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Initialize()
@@ -49,8 +46,7 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             _logText.fontSize = 14;
             
             //_allLogs準備
-            _allLogs = new List<string>();
-            _mostOldLog = 0;
+            
             Log("<color=purple>KeyTester</color> <color=black>:</color> Initialized",Color.cyan);
         }
 
@@ -69,13 +65,9 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             {
                 st.Append($"<color=purple>{type.GetType().Name}</color><color=black> : </color>");
             }
-            st.Append($"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}</color>\n");
+            st.Append($"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{message}\n<noparse id=3></noparse>");
             string log = st.ToString();
-            _allLogs.Add(log);
-
-            UpdateLogText();
-
-            _updateMonitor._logQueue.Enqueue((Time.time,_allLogs.Count));
+            _logText.text += log;
         }
 
         
@@ -121,18 +113,17 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
             LogInternal($"[Error] {message}", type, Color.red);
         }
 
-        private static void UpdateLogText()
+        public static void SetLogTimer(float time)
         {
-            var visibleLogs = _allLogs.GetRange(_mostOldLog, _allLogs.Count - _mostOldLog);
-            _logText.text = string.Join("", visibleLogs);
+            _updateMonitor.LogDeleteTime = time;
         }
 
         public static void OldLogDelete()
         {
-            if (_mostOldLog < _allLogs.Count)
+            int index = _logText.text.IndexOf("<noparse id=3></noparse>", StringComparison.Ordinal);
+            if (index != -1)
             {
-                _mostOldLog++;
-                UpdateLogText();
+                _logText.text = _logText.text.Substring(index + "<noparse id=3></noparse>".Length);
             }
         }
     }

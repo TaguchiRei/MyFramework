@@ -6,7 +6,8 @@ namespace GamesKeystoneFramework.KeyDebug.KeyLog
     public class KeyTesterUpdateMonitoring : MonoBehaviour
     {
         public Queue<(float,int)> _logQueue = new();
-        public float LogDeleteTime = 3;
+        public float LogDeleteTime = 7;
+        
 
         private void Update()
         {
