@@ -15,43 +15,47 @@ namespace GamesKeystoneFramework.KeyMathBit
 
         public static DUlong operator <<(DUlong a, int bits)
         {
-            if (bits < 0 || bits > 127)
+            switch (bits)
             {
-                throw new ArgumentOutOfRangeException(nameof(bits), "Shift amount must be between 0 and 127.");
-            }
-
-            if (bits == 0) return a;
-
-            if (bits < 64)
-            {
-                ulong newHigh = (a._high << bits) | (a._low >> (64 - bits));
-                ulong newLow = a._low << bits;
-                return new DUlong(newHigh, newLow);
-            }
-            else
-            {
-                ulong newHigh = a._low << (bits - 64);
-                return new DUlong(newHigh, 0);
+                case < 0:
+                case > 127:
+                    throw new ArgumentOutOfRangeException(nameof(bits), "Shift amount must be between 0 and 127.");
+                case 0:
+                    return a;
+                case < 64:
+                {
+                    ulong newHigh = (a._high << bits) | (a._low >> (64 - bits));
+                    ulong newLow = a._low << bits;
+                    return new DUlong(newHigh, newLow);
+                }
+                default:
+                {
+                    ulong newHigh = a._low << (bits - 64);
+                    return new DUlong(newHigh, 0);
+                }
             }
         }
 
         public static DUlong operator >>(DUlong a, int bits)
         {
-            if (bits < 0 || bits > 127)
-                throw new ArgumentOutOfRangeException(nameof(bits), "Shift amount must be between 0 and 127.");
-
-            if (bits == 0) return a;
-
-            if (bits < 64)
+            switch (bits)
             {
-                ulong newLow = (a._low >> bits) | (a._high << (64 - bits));
-                ulong newHigh = a._high >> bits;
-                return new DUlong(newHigh, newLow);
-            }
-            else
-            {
-                ulong newLow = a._high >> (bits - 64);
-                return new DUlong(0, newLow);
+                case < 0:
+                case > 127:
+                    throw new ArgumentOutOfRangeException(nameof(bits), "Shift amount must be between 0 and 127.");
+                case 0:
+                    return a;
+                case < 64:
+                {
+                    ulong newLow = (a._low >> bits) | (a._high << (64 - bits));
+                    ulong newHigh = a._high >> bits;
+                    return new DUlong(newHigh, newLow);
+                }
+                default:
+                {
+                    ulong newLow = a._high >> (bits - 64);
+                    return new DUlong(0, newLow);
+                }
             }
         }
 
